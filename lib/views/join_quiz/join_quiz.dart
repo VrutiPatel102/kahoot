@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kahoot_app/constants/app.dart';
 import 'package:kahoot_app/views/join_quiz/join_controller.dart';
 
 class JoinQuiz extends GetView<JoinController> {
@@ -7,6 +8,15 @@ class JoinQuiz extends GetView<JoinController> {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(body: _buildBody());
+  }
+
+  Widget _buildBody() {
+    return AppBackground(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [Text("MyApp", style: TextStyle(fontSize: 50))],
+      ),
+    );
   }
 }
