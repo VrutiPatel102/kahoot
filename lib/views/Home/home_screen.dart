@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kahoot_app/constants/app.dart';
 import 'package:kahoot_app/constants/app_buttons.dart';
 import 'package:kahoot_app/constants/app_images.dart';
 import 'package:kahoot_app/views/Home/home_controller.dart';
@@ -13,18 +14,10 @@ class HomeScreen extends GetView<HomeController> {
   }
 
   Widget _buildBody() {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(AppImages().backgroundImage),
-          fit: BoxFit.fill,
-        ),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [_joinBtn(), SizedBox(height: 20), _createBtn()],
-        ),
+    return AppBackground(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [_joinBtn(), SizedBox(height: 20), _createBtn()],
       ),
     );
   }
