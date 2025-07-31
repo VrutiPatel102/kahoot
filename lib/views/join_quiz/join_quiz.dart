@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kahoot_app/constants/app.dart';
+import 'package:kahoot_app/constants/app_images.dart';
 import 'package:kahoot_app/views/join_quiz/join_controller.dart';
 
 class JoinQuiz extends GetView<JoinController> {
@@ -13,6 +14,7 @@ class JoinQuiz extends GetView<JoinController> {
 
   Widget _buildBody() {
     return AppBackground(
+      imagePath: AppImages().backgrndImage,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [Text("MyApp", style: TextStyle(fontSize: 50))],

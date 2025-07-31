@@ -13,6 +13,7 @@ class SplashScreen extends GetView<SplashController> {
     SplashController controller1 = controller;
     return Scaffold(
       body: AppBackground(
+        imagePath: AppImages().backgrndImage,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -1,18 +1,21 @@
 import 'package:flutter/cupertino.dart';
 
-import 'app_images.dart';
-
 class AppBackground extends StatelessWidget {
   final Widget child;
+  final String imagePath;
 
-  const AppBackground({super.key, required this.child});
+  const AppBackground({
+    super.key,
+    required this.child,
+    required this.imagePath,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AppImages().backgroundImage),
+          image: AssetImage(imagePath),
           fit: BoxFit.fill,
         ),
       ),

@@ -15,6 +15,7 @@ class HomeScreen extends GetView<HomeController> {
 
   Widget _buildBody() {
     return AppBackground(
+      imagePath: AppImages().backgroundImage,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [_joinBtn(), SizedBox(height: 20), _createBtn()],
