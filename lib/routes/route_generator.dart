@@ -1,4 +1,5 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:kahoot_app/routes/app_route.dart';
 import 'package:kahoot_app/views/Home/home_binding.dart';
 import 'package:kahoot_app/views/Home/home_screen.dart';
 import 'package:kahoot_app/views/create_quiz/create_binding.dart';
@@ -11,16 +12,24 @@ import 'package:kahoot_app/views/splash/splash_screen.dart';
 class AppPages {
   static final routes = [
     GetPage(
-      name: '/splash',
+      name: AppRoute.splash,
       page: () => SplashScreen(),
       binding: SplashBinding(),
     ),
-    GetPage(name: '/home', page: () => HomeScreen(), binding: HomeBindings()),
     GetPage(
-      name: '/createQuiz',
+      name: AppRoute.home,
+      page: () => HomeScreen(),
+      binding: HomeBindings(),
+    ),
+    GetPage(
+      name: AppRoute.createQuiz,
       page: () => CreateQuiz(),
       binding: CreateBinding(),
     ),
-    GetPage(name: '/joinQuiz', page: () => JoinQuiz(), binding: JoinBinding()),
+    GetPage(
+      name: AppRoute.joinQuiz,
+      page: () => JoinQuiz(),
+      binding: JoinBinding(),
+    ),
   ];
 }

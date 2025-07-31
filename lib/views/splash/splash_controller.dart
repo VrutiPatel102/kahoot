@@ -1,14 +1,21 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 
-class SplashController extends GetxController{
+import 'package:kahoot_app/routes/app_route.dart';
+
+class SplashController extends GetxController {
   @override
-   void onInit()
-   {
-     super.onInit();
-     Future.delayed(Duration(seconds: 3),() {
-       // print("Navigating to home...");
-       Get.offAllNamed('/home');
-     },);
-   }
+  void onReady() {
+    // TODO: implement onReady
+    super.onReady();
+  }
+
+  @override
+  void onInit() {
+    Future.delayed(Duration(seconds: 3)).then((_) {
+      Get.toNamed(AppRoute.home);
+    });
+    super.onInit();
+  }
 }
