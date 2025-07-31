@@ -9,8 +9,6 @@ import 'package:kahoot_app/views/splash/splash_binding.dart';
 import 'package:kahoot_app/views/splash/splash_screen.dart';
 
 class AppPages {
-
-
   static final routes = [
     GetPage(
       name: '/splash',
