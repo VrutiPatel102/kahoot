@@ -6,5 +6,7 @@ class AppRoute {
   static const enterPin = '/enterPin';
   static const enterNickName = '/enterNickName';
   static const showNickName = '/showNickName';
-
+  static const getReadyLoading = '/getReadyLoading';
+  static const queLoading = '/queLoading';
+  // static const Loading = '/getReadyLoading';
 }

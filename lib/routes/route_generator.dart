@@ -8,6 +8,10 @@ import 'package:kahoot_app/views/enter_name/enterName_binding.dart';
 import 'package:kahoot_app/views/enter_name/enterName_screen.dart';
 import 'package:kahoot_app/views/enter_pin/enterPin_binding.dart';
 import 'package:kahoot_app/views/enter_pin/enter_pin.dart';
+import 'package:kahoot_app/views/get_ready_loading/get_ready_loading.dart';
+import 'package:kahoot_app/views/get_ready_loading/get_ready_loading_binding.dart';
+import 'package:kahoot_app/views/que_loading/que_loading.dart';
+import 'package:kahoot_app/views/que_loading/que_loading_binding.dart';
 import 'package:kahoot_app/views/show_nickname/show_nickname.dart';
 import 'package:kahoot_app/views/show_nickname/show_nickname_binding.dart';
 import 'package:kahoot_app/views/splash/splash_binding.dart';
@@ -44,6 +48,16 @@ class AppPages {
       name: AppRoute.showNickName,
       page: () => ShowNicknameScreen(),
       binding: ShowNickNameBinding(),
+    ),
+    GetPage(
+      name: AppRoute.getReadyLoading,
+      page: () => GetReadyLoadingScreen(),
+      binding: GetReadyLoadingBinding(),
+    ),
+    GetPage(
+      name: AppRoute.queLoading,
+      page: () => QueLoadingScreen(),
+      binding: QueLoadingBinding(),
     ),
   ];
 }
