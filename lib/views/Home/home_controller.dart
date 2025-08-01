@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 
 class HomeController extends GetxController {
   void onJoinQuiz() {
-    Get.toNamed('/joinQuiz');
+    Get.toNamed('/enterPin');
   }
 
   void onCreateQuiz() {

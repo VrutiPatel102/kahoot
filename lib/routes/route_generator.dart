@@ -4,8 +4,10 @@ import 'package:kahoot_app/views/Home/home_binding.dart';
 import 'package:kahoot_app/views/Home/home_screen.dart';
 import 'package:kahoot_app/views/create_quiz/create_binding.dart';
 import 'package:kahoot_app/views/create_quiz/create_quiz.dart';
-import 'package:kahoot_app/views/join_quiz/join_binding.dart';
-import 'package:kahoot_app/views/join_quiz/join_quiz.dart';
+import 'package:kahoot_app/views/enter_name/enterName_binding.dart';
+import 'package:kahoot_app/views/enter_name/enterName_screen.dart';
+import 'package:kahoot_app/views/enter_pin/enterPin_binding.dart';
+import 'package:kahoot_app/views/enter_pin/enter_pin.dart';
 import 'package:kahoot_app/views/splash/splash_binding.dart';
 import 'package:kahoot_app/views/splash/splash_screen.dart';
 
@@ -27,9 +29,14 @@ class AppPages {
       binding: CreateBinding(),
     ),
     GetPage(
-      name: AppRoute.joinQuiz,
-      page: () => JoinQuiz(),
-      binding: JoinBinding(),
+      name: AppRoute.enterPin,
+      page: () => EnterPin(),
+      binding: EnterPinBinding(),
+    ),
+    GetPage(
+      name: AppRoute.enterNickName,
+      page: () => NicknameScreen(),
+      binding: NickNameBinding(),
     ),
   ];
 }
