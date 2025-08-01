@@ -8,7 +8,10 @@ class NickNameController extends GetxController {
   void onEnterName() {
     String name = nameController.text.trim();
     if (name.isNotEmpty) {
-      Get.toNamed(AppRoute.home);
+      Get.toNamed(
+        AppRoute.showNickName,
+        arguments: {'fullName': name},
+      );
     } else {
       Get.snackbar(
         "Error",
