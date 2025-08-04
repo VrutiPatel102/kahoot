@@ -7,4 +7,8 @@ class AppRoute {
   static const enterNickName = '/enterNickName';
   static const login = '/login';
   static const register = '/register';
+  static const showNickName = '/showNickName';
+  static const getReadyLoading = '/getReadyLoading';
+  static const queLoading = '/queLoading';
+  // static const Loading = '/getReadyLoading';
 }

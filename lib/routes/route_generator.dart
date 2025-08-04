@@ -12,6 +12,12 @@ import 'package:kahoot_app/views/login/login_binding.dart';
 import 'package:kahoot_app/views/login/login_screen.dart';
 import 'package:kahoot_app/views/register/register_binding.dart';
 import 'package:kahoot_app/views/register/register_screen.dart';
+import 'package:kahoot_app/views/get_ready_loading/get_ready_loading.dart';
+import 'package:kahoot_app/views/get_ready_loading/get_ready_loading_binding.dart';
+import 'package:kahoot_app/views/que_loading/que_loading.dart';
+import 'package:kahoot_app/views/que_loading/que_loading_binding.dart';
+import 'package:kahoot_app/views/show_nickname/show_nickname.dart';
+import 'package:kahoot_app/views/show_nickname/show_nickname_binding.dart';
 import 'package:kahoot_app/views/splash/splash_binding.dart';
 import 'package:kahoot_app/views/splash/splash_screen.dart';
 
@@ -51,6 +57,21 @@ class AppPages {
       name: AppRoute.register,
       page: () => RegisterScreen(),
       binding: RegisterBinding(),
+    ),
+    GetPage(
+      name: AppRoute.showNickName,
+      page: () => ShowNicknameScreen(),
+      binding: ShowNickNameBinding(),
+    ),
+    GetPage(
+      name: AppRoute.getReadyLoading,
+      page: () => GetReadyLoadingScreen(),
+      binding: GetReadyLoadingBinding(),
+    ),
+    GetPage(
+      name: AppRoute.queLoading,
+      page: () => QueLoadingScreen(),
+      binding: QueLoadingBinding(),
     ),
   ];
 }
