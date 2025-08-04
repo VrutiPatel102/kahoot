@@ -22,6 +22,6 @@ class EnterPinController extends GetxController {
   }
 
   void login() {
-    Get.toNamed(AppRoute.enterNickName);
+    Get.toNamed(AppRoute.login);
   }
 }

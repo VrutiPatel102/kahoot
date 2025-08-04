@@ -8,6 +8,10 @@ import 'package:kahoot_app/views/enter_name/enterName_binding.dart';
 import 'package:kahoot_app/views/enter_name/enterName_screen.dart';
 import 'package:kahoot_app/views/enter_pin/enterPin_binding.dart';
 import 'package:kahoot_app/views/enter_pin/enter_pin.dart';
+import 'package:kahoot_app/views/login/login_binding.dart';
+import 'package:kahoot_app/views/login/login_screen.dart';
+import 'package:kahoot_app/views/register/register_binding.dart';
+import 'package:kahoot_app/views/register/register_screen.dart';
 import 'package:kahoot_app/views/get_ready_loading/get_ready_loading.dart';
 import 'package:kahoot_app/views/get_ready_loading/get_ready_loading_binding.dart';
 import 'package:kahoot_app/views/que_loading/que_loading.dart';
@@ -45,6 +49,16 @@ class AppPages {
       name: AppRoute.enterNickName,
       page: () => NicknameScreen(),
       binding: NickNameBinding(),
+    ),
+    GetPage(
+      name: AppRoute.login,
+      page: () => LoginScreen(),
+      binding: LoginBinding(),
+    ),
+    GetPage(
+      name: AppRoute.register,
+      page: () => RegisterScreen(),
+      binding: RegisterBinding(),
     ),
     GetPage(
       name: AppRoute.showNickName,

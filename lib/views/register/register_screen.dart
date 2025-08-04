@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kahoot_app/constants/app.dart';
-import 'package:kahoot_app/constants/app_images.dart';
 import 'package:kahoot_app/constants/app_colors.dart';
-import 'login_controller.dart';
+import 'package:kahoot_app/constants/app_images.dart';
+import 'package:kahoot_app/views/register/register_controller.dart';
 
-class LoginScreen extends GetView<LoginController> {
-  const LoginScreen({super.key});
+class RegisterScreen extends GetView<RegisterController> {
+  const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class LoginScreen extends GetView<LoginController> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Welcome!",
+            " Welcome! \nto Register",
             style: TextStyle(
               fontSize: 40,
               color: AppColors().white,
@@ -56,6 +56,12 @@ class LoginScreen extends GetView<LoginController> {
       ),
       child: Column(
         children: [
+          _textField(
+            hintText: 'Username',
+            controller: controller.usernameController,
+            obscureText: true,
+          ),
+          SizedBox(height: 10),
           _textField(
             hintText: 'Email',
             controller: controller.emailController,
@@ -104,13 +110,13 @@ class LoginScreen extends GetView<LoginController> {
       height: 50,
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: controller.onLogin,
+        onPressed: controller.register,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors().black,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         ),
         child: Text(
-          'Login',
+          'Register',
           style: TextStyle(color: AppColors().white, fontSize: 18),
         ),
       ),
@@ -119,14 +125,14 @@ class LoginScreen extends GetView<LoginController> {
 
   Widget _bottomText() {
     return GestureDetector(
-      onTap: controller.register,
+      onTap: controller.onLogin,
       child: RichText(
         text: TextSpan(
           style: TextStyle(fontSize: 14, color: AppColors().white),
           children: [
-            const TextSpan(text: "Don't have an account? "),
+            const TextSpan(text: "Allready have an account? "),
             TextSpan(
-              text: "Register",
+              text: "Login",
               style: const TextStyle(
                 decoration: TextDecoration.underline,
                 fontWeight: FontWeight.bold,
