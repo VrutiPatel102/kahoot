@@ -14,6 +14,8 @@ import 'package:kahoot_app/views/que_loading/que_loading.dart';
 import 'package:kahoot_app/views/que_loading/que_loading_binding.dart';
 import 'package:kahoot_app/views/show_nickname/show_nickname.dart';
 import 'package:kahoot_app/views/show_nickname/show_nickname_binding.dart';
+import 'package:kahoot_app/views/show_option/show_option.dart';
+import 'package:kahoot_app/views/show_option/show_option_binding.dart';
 import 'package:kahoot_app/views/splash/splash_binding.dart';
 import 'package:kahoot_app/views/splash/splash_screen.dart';
 
@@ -58,6 +60,11 @@ class AppPages {
       name: AppRoute.queLoading,
       page: () => QueLoadingScreen(),
       binding: QueLoadingBinding(),
+    ),
+    GetPage(
+      name: AppRoute.showOption,
+      page: () => ShowOptionScreen(),
+      binding: ShowOptionBinding(),
     ),
   ];
 }

@@ -12,10 +12,10 @@ class ShowNickNameController extends GetxController {
     super.onInit();
     fullName = Get.arguments['fullName'] ?? '';
     initial = fullName.isNotEmpty ? fullName[0].toUpperCase() : '?';
-    _goToGetReadyScreen();
+    goToGetReadyScreen();
   }
 
-  void _goToGetReadyScreen() async {
+  void goToGetReadyScreen() async {
     await Future.delayed( Duration(seconds: 5));
     Get.toNamed(AppRoute.getReadyLoading);
   }

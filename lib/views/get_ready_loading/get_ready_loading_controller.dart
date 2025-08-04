@@ -1,9 +1,8 @@
 import 'package:get/get.dart';
 import 'package:kahoot_app/routes/app_route.dart';
 
-class GetReadyLoadingController extends GetxController
-{
-  var isLoading = true.obs;
+class GetReadyLoadingController extends GetxController {
+  // var isLoading = true.obs;
 
   @override
   void onInit() {
@@ -13,9 +12,8 @@ class GetReadyLoadingController extends GetxController
   }
 
   void simulateLoading() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 3));
     print('Navigating to Home...');
-    Get.offNamed(AppRoute.home);
+    Get.toNamed(AppRoute.queLoading);
   }
-
 }

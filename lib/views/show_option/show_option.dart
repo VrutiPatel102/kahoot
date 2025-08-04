@@ -7,7 +7,4 @@ class ShowOptionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold();
   }
-
-
-
 }

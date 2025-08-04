@@ -8,5 +8,5 @@ class AppRoute {
   static const showNickName = '/showNickName';
   static const getReadyLoading = '/getReadyLoading';
   static const queLoading = '/queLoading';
-  // static const Loading = '/getReadyLoading';
+  static const showOption = '/showOption';
 }

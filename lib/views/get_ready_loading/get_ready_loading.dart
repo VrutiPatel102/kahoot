@@ -10,6 +10,7 @@ class GetReadyLoadingScreen extends GetView<GetReadyLoadingController> {
 
   @override
   Widget build(BuildContext context) {
+    GetReadyLoadingController controller2 = controller;
     return Scaffold(
       body: AppBackground(
         imagePath: AppImages().backgrndImage,
