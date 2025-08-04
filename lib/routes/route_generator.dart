@@ -8,6 +8,10 @@ import 'package:kahoot_app/views/enter_name/enterName_binding.dart';
 import 'package:kahoot_app/views/enter_name/enterName_screen.dart';
 import 'package:kahoot_app/views/enter_pin/enterPin_binding.dart';
 import 'package:kahoot_app/views/enter_pin/enter_pin.dart';
+import 'package:kahoot_app/views/login/login_binding.dart';
+import 'package:kahoot_app/views/login/login_screen.dart';
+import 'package:kahoot_app/views/register/register_binding.dart';
+import 'package:kahoot_app/views/register/register_screen.dart';
 import 'package:kahoot_app/views/splash/splash_binding.dart';
 import 'package:kahoot_app/views/splash/splash_screen.dart';
 
@@ -37,6 +41,16 @@ class AppPages {
       name: AppRoute.enterNickName,
       page: () => NicknameScreen(),
       binding: NickNameBinding(),
+    ),
+    GetPage(
+      name: AppRoute.login,
+      page: () => LoginScreen(),
+      binding: LoginBinding(),
+    ),
+    GetPage(
+      name: AppRoute.register,
+      page: () => RegisterScreen(),
+      binding: RegisterBinding(),
     ),
   ];
 }

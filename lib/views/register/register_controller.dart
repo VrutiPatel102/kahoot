@@ -1,16 +1,15 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:kahoot_app/routes/app_route.dart';
 
-class LoginController extends GetxController {
+class RegisterController extends GetxController {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
 
-  void onLogin() {}
-
-  void register() {
-    Get.toNamed(AppRoute.register);
+  void onLogin() {
+    Get.toNamed(AppRoute.login);
   }
+
+  void register() {}
 }
