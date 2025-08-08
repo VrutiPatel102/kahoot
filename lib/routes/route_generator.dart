@@ -10,6 +10,8 @@ import 'package:kahoot_app/views/enter_pin/enterPin_binding.dart';
 import 'package:kahoot_app/views/enter_pin/enter_pin.dart';
 import 'package:kahoot_app/views/login/login_binding.dart';
 import 'package:kahoot_app/views/login/login_screen.dart';
+// import 'package:kahoot_app/views/rank_screen/rank_binding.dart';
+// import 'package:kahoot_app/views/rank_screen/rank_screen.dart';
 import 'package:kahoot_app/views/register/register_binding.dart';
 import 'package:kahoot_app/views/register/register_screen.dart';
 import 'package:kahoot_app/views/get_ready_loading/get_ready_loading.dart';
@@ -80,5 +82,10 @@ class AppPages {
       page: () => ShowOptionScreen(),
       binding: ShowOptionBinding(),
     ),
+    // GetPage(
+    //   name: AppRoute.rank,
+    //   page: () => RankScreen(),
+    //   binding: RankBinding(),
+    // ),
   ];
 }

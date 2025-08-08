@@ -11,4 +11,6 @@ class AppRoute {
   static const getReadyLoading = '/getReadyLoading';
   static const queLoading = '/queLoading';
   static const showOption = '/showOption';
+
+  // static const rank = '/rankScreen';
 }
