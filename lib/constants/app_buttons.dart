@@ -15,21 +15,16 @@ class CustomButton extends StatelessWidget {
         foregroundColor: AppColors().white,
         backgroundColor: AppColors().purple,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        minimumSize: Size(double.infinity, 56),
+        minimumSize: Size(500,56),
       ),
       onPressed: onPressed,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            text,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: AppColors().white,
-            ),
-          ),
-        ],
+      child: Text(
+        text,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+          color: AppColors().white,
+        ),
       ),
     );
   }
