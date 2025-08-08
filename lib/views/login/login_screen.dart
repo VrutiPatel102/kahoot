@@ -15,6 +15,14 @@ class LoginScreen extends GetView<LoginController> {
         children: [
           _buildBody(),
           Positioned(
+            top: 45,
+            left: 10,
+            child: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.arrow_back_ios, color: AppColors().black),
+            ),
+          ),
+          Positioned(
             bottom: 30,
             left: 0,
             right: 0,

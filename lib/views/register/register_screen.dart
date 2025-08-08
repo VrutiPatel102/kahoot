@@ -13,7 +13,15 @@ class RegisterScreen extends GetView<RegisterController> {
     return Scaffold(
       body: Stack(
         children: [
-          _buildBody(),
+          _buildBody(context),
+          Positioned(
+            top: 45,
+            left: 10,
+            child: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.arrow_back_ios, color: AppColors().black),
+            ),
+          ),
           Positioned(
             bottom: 30,
             left: 0,
@@ -25,12 +33,18 @@ class RegisterScreen extends GetView<RegisterController> {
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
     return AppBackground(
       imagePath: AppImages().backgrndImage,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // IconButton(
+          //   onPressed: () {
+          //     Navigator.pop(context);
+          //   },
+          //   icon: Icon(Icons.arrow_back_ios),
+          // ),
           Text(
             " Welcome! \nto Register",
             style: TextStyle(
