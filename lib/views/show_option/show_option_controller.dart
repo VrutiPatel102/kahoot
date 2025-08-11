@@ -6,17 +6,16 @@ class ShowOptionController extends GetxController {
 
   void select(int index) {
     selectedIndex.value = index;
-
   }
+
   @override
-  void onInit() {
-    super.onInit();
+  void onReady() {
+    super.onReady();
     simulateLoading();
   }
 
   void simulateLoading() async {
-    await Future.delayed(Duration(seconds: 3));
-    print('Navigating to Show Option...');
-    Get.toNamed(AppRoute.scoreStatus);
+    await Future.delayed(const Duration(seconds: 3));
+    Get.offNamed(AppRoute.scoreStatus, preventDuplicates: false);
   }
 }

@@ -1,7 +1,8 @@
 import 'package:get/get.dart';
 import 'package:kahoot_app/routes/app_route.dart';
+import 'package:kahoot_app/views/que_loading/que_loading_controller.dart';
 
-class ScoreStatusController extends GetxController{
+class ScoreStatusController extends GetxController {
   var score = 691.obs;
   var answerStreak = 1.obs;
 
@@ -9,15 +10,25 @@ class ScoreStatusController extends GetxController{
     score.value = newScore;
     answerStreak.value = streak;
   }
+
   @override
-  void onInit() {
-    super.onInit();
+  void onReady() {
+    super.onReady();
     simulateLoading();
   }
 
   void simulateLoading() async {
-    await Future.delayed(Duration(seconds: 3));
-    print('Navigating to Show Option...');
-    Get.toNamed(AppRoute.userRank);
+    await Future.delayed(const Duration(seconds: 3));
+
+    // Increase loop count
+    QueLoadingController.loopCount++;
+
+    if (QueLoadingController.loopCount < 3) {
+      // Go to QueLoading again
+      Get.offNamed(AppRoute.queLoading, preventDuplicates: false);
+    } else {
+      // After 3 cycles → User Rank screen
+      Get.offNamed(AppRoute.userRank);
+    }
   }
 }
