@@ -18,12 +18,16 @@ import 'package:kahoot_app/views/get_ready_loading/get_ready_loading.dart';
 import 'package:kahoot_app/views/get_ready_loading/get_ready_loading_binding.dart';
 import 'package:kahoot_app/views/que_loading/que_loading.dart';
 import 'package:kahoot_app/views/que_loading/que_loading_binding.dart';
+import 'package:kahoot_app/views/score_status/score_status_binding.dart';
+import 'package:kahoot_app/views/score_status/score_status_screen.dart';
 import 'package:kahoot_app/views/show_nickname/show_nickname.dart';
 import 'package:kahoot_app/views/show_nickname/show_nickname_binding.dart';
 import 'package:kahoot_app/views/show_option/show_option.dart';
 import 'package:kahoot_app/views/show_option/show_option_binding.dart';
 import 'package:kahoot_app/views/splash/splash_binding.dart';
 import 'package:kahoot_app/views/splash/splash_screen.dart';
+import 'package:kahoot_app/views/user_rank/user_rank_binding.dart';
+import 'package:kahoot_app/views/user_rank/user_rank_screen.dart';
 
 class AppPages {
   static final routes = [
@@ -82,10 +86,15 @@ class AppPages {
       page: () => ShowOptionScreen(),
       binding: ShowOptionBinding(),
     ),
-    // GetPage(
-    //   name: AppRoute.rank,
-    //   page: () => RankScreen(),
-    //   binding: RankBinding(),
-    // ),
+    GetPage(
+      name: AppRoute.scoreStatus,
+      page: () => ScoreStatusScreen(),
+      binding: ScoreStatusBinding(),
+    ),
+    GetPage(
+      name: AppRoute.userRank,
+      page: () => UserRankScreen(),
+      binding: UserRankBinding(),
+    ),
   ];
 }
