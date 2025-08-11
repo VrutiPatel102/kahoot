@@ -12,5 +12,8 @@ class AppRoute {
   static const queLoading = '/queLoading';
   static const showOption = '/showOption';
 
-  // static const rank = '/rankScreen';
+  static const dashboardHostSide = '/dashboardHostSide';
+  static const loadingHostSide = '/loadingHostSide';
+
+  static const quizLobbyScreen = '/quizLobbyScreen';
 }

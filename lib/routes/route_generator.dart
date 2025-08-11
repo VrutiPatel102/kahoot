@@ -2,6 +2,12 @@ import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:kahoot_app/routes/app_route.dart';
 import 'package:kahoot_app/views/Home/home_binding.dart';
 import 'package:kahoot_app/views/Home/home_screen.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/deshboard_host/dashboard_binding.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/deshboard_host/dashboard_screen.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/loading_pinGenerate/loading_pin.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/loading_pinGenerate/loading_pin_binding.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/quiz_lobby_screen/quiz_lobby_bindings.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/quiz_lobby_screen/quiz_lobby_screen.dart';
 import 'package:kahoot_app/views/create_quiz/create_binding.dart';
 import 'package:kahoot_app/views/create_quiz/create_quiz.dart';
 import 'package:kahoot_app/views/enter_name/enterName_binding.dart';
@@ -10,6 +16,7 @@ import 'package:kahoot_app/views/enter_pin/enterPin_binding.dart';
 import 'package:kahoot_app/views/enter_pin/enter_pin.dart';
 import 'package:kahoot_app/views/login/login_binding.dart';
 import 'package:kahoot_app/views/login/login_screen.dart';
+
 // import 'package:kahoot_app/views/rank_screen/rank_binding.dart';
 // import 'package:kahoot_app/views/rank_screen/rank_screen.dart';
 import 'package:kahoot_app/views/register/register_binding.dart';
@@ -82,10 +89,20 @@ class AppPages {
       page: () => ShowOptionScreen(),
       binding: ShowOptionBinding(),
     ),
-    // GetPage(
-    //   name: AppRoute.rank,
-    //   page: () => RankScreen(),
-    //   binding: RankBinding(),
-    // ),
+    GetPage(
+      name: AppRoute.dashboardHostSide,
+      page: () => HostDashboardView(),
+      binding: HostDashboardBinding(),
+    ),
+    GetPage(
+      name: AppRoute.loadingHostSide,
+      page: () => LoadingPinScreen(),
+      binding: LoadingPinBindings(),
+    ),
+    GetPage(
+      name: AppRoute.quizLobbyScreen,
+      page: () => QuizLobbyView(),
+      binding: QuizLobbyBinding(),
+    ),
   ];
 }
