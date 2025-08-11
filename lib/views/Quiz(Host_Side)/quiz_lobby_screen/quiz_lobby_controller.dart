@@ -6,6 +6,7 @@ class QuizLobbyController extends GetxController {
   var quizTitle = "My Awesome Quiz".obs;
   var players = <String>[].obs;
   var pinCode = "000000".obs;
+  var totalParticipants = 0.obs;
 
   @override
   void onInit() {
@@ -15,7 +16,17 @@ class QuizLobbyController extends GetxController {
   }
 
   void addSamplePlayers() {
-    players.addAll(["Alice", "Bob", "Charlie", "Daisy", "Ethan", "Fiona"]);
+    players.addAll([
+      "Alice",
+      "Jhon",
+      "Jeel",
+      "Bob",
+      "Charlie",
+      "Daisy",
+      "Ethan",
+      "Fiona",
+    ]);
+    totalParticipants.value = players.length;
   }
 
   void generateRandomPin() {
@@ -26,6 +37,7 @@ class QuizLobbyController extends GetxController {
 
   void addPlayer(String name) {
     players.add(name);
+    totalParticipants.value = players.length;
   }
 
   void startQuiz() {}
