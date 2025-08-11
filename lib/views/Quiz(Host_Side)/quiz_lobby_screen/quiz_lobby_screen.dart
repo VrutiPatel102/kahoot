@@ -1,33 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kahoot_app/constants/app.dart';
+import 'package:kahoot_app/constants/app_colors.dart';
 import 'quiz_lobby_controller.dart';
+import 'package:kahoot_app/constants/app_images.dart';
 
 class QuizLobbyView extends GetView<QuizLobbyController> {
   const QuizLobbyView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: buildAppBar(), body: buildBody());
+    return AppBackground(
+      imagePath: AppImages().backgroundImage,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: buildAppBar(),
+        body: buildBody(),
+      ),
+    );
   }
 
-  PreferredSizeWidget buildAppBar() {
+  AppBar buildAppBar() {
     return AppBar(
-      title: Obx(() => Text(controller.quizTitle.value)),
+      title: Obx(
+        () => Text(
+          controller.quizTitle.value,
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: AppColors().white,
+          ),
+        ),
+      ),
       centerTitle: true,
-      backgroundColor: Colors.deepPurple,
+      elevation: 0,
+      backgroundColor: Colors.deepPurple.withOpacity(0.8),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+      ),
     );
   }
 
   Widget buildBody() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           buildPinCodeSection(),
-          const SizedBox(height: 20),
-          buildPlayersList(),
-          const Spacer(),
+          SizedBox(height: 20),
+          Expanded(child: buildPlayersList()),
+          SizedBox(height: 20),
           buildStartButton(),
         ],
       ),
@@ -35,37 +57,66 @@ class QuizLobbyView extends GetView<QuizLobbyController> {
   }
 
   Widget buildPinCodeSection() {
-    return Column(
-      children: [
-        const Text(
-          "Game PIN",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        Obx(
-          () => Text(
-            controller.pinCode.value,
-            style: const TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              color: Colors.deepPurple,
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors().white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors().purple,
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          const Text(
+            "Game PIN",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 6),
+          Obx(
+            () => Text(
+              controller.pinCode.value,
+              style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+                color: AppColors().purple,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget buildPlayersList() {
-    return Expanded(
-      child: Obx(
-        () => ListView.builder(
+    return Obx(
+      () => Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.85),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: ListView.separated(
           itemCount: controller.players.length,
+          separatorBuilder: (_, __) => Divider(),
           itemBuilder: (context, index) {
+            final player = controller.players[index];
             return ListTile(
               leading: CircleAvatar(
-                child: Text(controller.players[index][0].toUpperCase()),
+                backgroundColor: AppColors().purple,
+                child: Text(
+                  player[0].toUpperCase(),
+                  style: TextStyle(color: AppColors().white),
+                ),
               ),
-              title: Text(controller.players[index]),
+              title: Text(
+                player,
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
             );
           },
         ),
@@ -77,10 +128,19 @@ class QuizLobbyView extends GetView<QuizLobbyController> {
     return ElevatedButton(
       onPressed: controller.startQuiz,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: AppColors().purple,
         padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 5,
       ),
-      child: const Text("Start Quiz", style: TextStyle(fontSize: 18)),
+      child: Text(
+        "Start Quiz",
+        style: TextStyle(
+          fontSize: 18,
+          color: AppColors().white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 }
