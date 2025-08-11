@@ -18,13 +18,18 @@ class CustomButton extends StatelessWidget {
         minimumSize: Size(500, 56),
       ),
       onPressed: onPressed,
-      child: Text(
-        text,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-          color: AppColors().white,
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            text,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: AppColors().white,
+            ),
+          ),
+        ],
       ),
     );
   }

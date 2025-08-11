@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/rank_screen',
+      initialRoute: '/splash',
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     );
