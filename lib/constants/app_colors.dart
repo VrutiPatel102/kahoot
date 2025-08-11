@@ -10,4 +10,5 @@ class AppColors {
   Color red = Colors.red;
   Color blue = Colors.blue;
   Color orange = Color(0xFFFFC300);
+  Color amber = Colors.amber;
 }
