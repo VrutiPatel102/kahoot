@@ -2,10 +2,13 @@ import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:kahoot_app/routes/app_route.dart';
 import 'package:kahoot_app/views/Home/home_binding.dart';
 import 'package:kahoot_app/views/Home/home_screen.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/countdown_host/countdown_binding.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/deshboard_host/dashboard_binding.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/deshboard_host/dashboard_screen.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/loading_pinGenerate/loading_pin.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/loading_pinGenerate/loading_pin_binding.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/que_view/que_view.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/que_view/que_view_binding.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/quiz_lobby_screen/quiz_lobby_bindings.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/quiz_lobby_screen/quiz_lobby_screen.dart';
 import 'package:kahoot_app/views/create_quiz/create_binding.dart';
@@ -35,6 +38,9 @@ import 'package:kahoot_app/views/splash/splash_binding.dart';
 import 'package:kahoot_app/views/splash/splash_screen.dart';
 import 'package:kahoot_app/views/user_rank/user_rank_binding.dart';
 import 'package:kahoot_app/views/user_rank/user_rank_screen.dart';
+
+import '../views/Quiz(Host_Side)/countdown_host/count_down_screen.dart'
+    show CountdownView;
 
 class AppPages {
   static final routes = [
@@ -94,6 +100,16 @@ class AppPages {
       binding: ShowOptionBinding(),
     ),
     GetPage(
+      name: AppRoute.scoreStatus,
+      page: () => ScoreStatusScreen(),
+      binding: ScoreStatusBinding(),
+    ),
+    GetPage(
+      name: AppRoute.userRank,
+      page: () => UserRankScreen(),
+      binding: UserRankBinding(),
+    ),
+    GetPage(
       name: AppRoute.dashboardHostSide,
       page: () => HostDashboardView(),
       binding: HostDashboardBinding(),
@@ -109,14 +125,14 @@ class AppPages {
       binding: QuizLobbyBinding(),
     ),
     GetPage(
-      name: AppRoute.scoreStatus,
-      page: () => ScoreStatusScreen(),
-      binding: ScoreStatusBinding(),
+      name: AppRoute.countdownScreen,
+      page: () => CountdownView(),
+      binding: CountdownBinding(),
     ),
     GetPage(
-      name: AppRoute.userRank,
-      page: () => UserRankScreen(),
-      binding: UserRankBinding(),
+      name: AppRoute.queScreen,
+      page: () => QuizQuestionView(),
+      binding: QueViewBinding(),
     ),
   ];
 }

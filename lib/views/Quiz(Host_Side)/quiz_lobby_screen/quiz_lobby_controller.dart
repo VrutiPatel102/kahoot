@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:get/get.dart';
+import 'package:kahoot_app/routes/app_route.dart';
 
 class QuizLobbyController extends GetxController {
   var quizTitle = "My Awesome Quiz".obs;
@@ -40,5 +41,7 @@ class QuizLobbyController extends GetxController {
     totalParticipants.value = players.length;
   }
 
-  void startQuiz() {}
+  void startQuiz() {
+    Get.toNamed(AppRoute.countdownScreen);
+  }
 }
