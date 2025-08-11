@@ -100,25 +100,37 @@ class QuizLobbyView extends GetView<QuizLobbyController> {
           color: Colors.white.withOpacity(0.85),
           borderRadius: BorderRadius.circular(15),
         ),
-        child: ListView.separated(
-          itemCount: controller.players.length,
-          separatorBuilder: (_, __) => Divider(),
-          itemBuilder: (context, index) {
-            final player = controller.players[index];
-            return ListTile(
-              leading: CircleAvatar(
-                backgroundColor: AppColors().purple,
-                child: Text(
-                  player[0].toUpperCase(),
-                  style: TextStyle(color: AppColors().white),
-                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Participants (${controller.totalParticipants.value})",
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: ListView.separated(
+                itemCount: controller.players.length,
+                separatorBuilder: (_, __) => const Divider(),
+                itemBuilder: (context, index) {
+                  final player = controller.players[index];
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: AppColors().purple,
+                      child: Text(
+                        player[0].toUpperCase(),
+                        style: TextStyle(color: AppColors().white),
+                      ),
+                    ),
+                    title: Text(
+                      player,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  );
+                },
               ),
-              title: Text(
-                player,
-                style: TextStyle(fontWeight: FontWeight.w500),
-              ),
-            );
-          },
+            ),
+          ],
         ),
       ),
     );
