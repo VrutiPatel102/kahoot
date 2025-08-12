@@ -1,34 +1,58 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kahoot_app/routes/app_route.dart';
+import 'package:kahoot_app/constants/app.dart';
+import 'package:kahoot_app/constants/app_images.dart';
+import 'package:kahoot_app/constants/app_colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EnterPinController extends GetxController {
-  final TextEditingController pinController = TextEditingController();
+  TextEditingController pinController = TextEditingController();
+  var isLoading = false.obs;
 
-  Future<void> onEnterPin() async { // renamed to match UI call
-    String pin = pinController.text.trim();
-    if (pin.isEmpty) {
-      Get.snackbar("Error", "Please enter a PIN");
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  /// Called when player enters a PIN
+  Future<void> onEnterPin() async {
+    final enteredPin = pinController.text.trim();
+
+    if (enteredPin.isEmpty) {
+      Get.snackbar("Error", "Please enter a game PIN");
       return;
     }
 
-    final doc = await FirebaseFirestore.instance
-        .collection('quizzes')
-        .doc(pin)
-        .get();
+    isLoading.value = true;
 
-    if (doc.exists) {
-      Get.toNamed(AppRoute.enterNickName, arguments: {'pin': pin});
-    } else {
-      Get.snackbar("Invalid PIN", "Please enter a valid game PIN");
+    try {
+      final snapshot = await _firestore
+          .collection('quizzes')
+          .where('pin', isEqualTo: enteredPin)
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isEmpty) {
+        Get.snackbar("Error", "Invalid PIN. Please check and try again.");
+        isLoading.value = false;
+        return;
+      }
+
+      // If valid PIN found, navigate
+      Get.toNamed(
+        '/enterNickname', // Replace with your actual nickname route
+        arguments: {
+          'pin': enteredPin,
+          'isHost': false,
+        },
+      );
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 
+  /// Host login button action
   void login() {
-    // Optional: Navigate to login screen
-    Get.toNamed(
-      AppRoute.login,
-      arguments: {'pin': pinController.text},
-    );  }
+    Get.toNamed('/login'); // Replace with your actual login route
+  }
 }
+

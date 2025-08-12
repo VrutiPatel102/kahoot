@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:kahoot_app/routes/app_route.dart';
 
 class QueLoadingController extends GetxController {
-  static int loopCount = 0; // Tracks repetitions
+  static int loopCount = 0;
 
   @override
   void onReady() {

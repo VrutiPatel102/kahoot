@@ -1,29 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:kahoot_app/routes/app_route.dart';
 
-class EnterNameController extends GetxController {
-  final TextEditingController nameController = TextEditingController();
+class EnterNickNameController extends GetxController {
+  final TextEditingController nicknameController = TextEditingController();
+
   late String pin;
+  late String quizId;
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void onInit() {
     super.onInit();
-    // Retrieve the pin from route arguments
-    final args = Get.arguments ?? {};
-    pin = args['pin'] ?? '';
-
-    if (pin.isEmpty) {
-      Get.snackbar("Error", "No PIN found. Please go back and enter it again.");
-      Future.delayed(const Duration(seconds: 2), () {
-        Get.offAllNamed(AppRoute.enterPin);
-      });
-    }
+    pin = Get.arguments['pin'];
+    quizId = Get.arguments['quizId'];
   }
 
-  Future<void> submitNickname() async {
-    String nickname = nameController.text.trim();
+  Future<void> onSubmitNickname() async {
+    String nickname = nicknameController.text.trim();
 
     if (nickname.isEmpty) {
       Get.snackbar("Error", "Please enter a nickname");
@@ -31,16 +27,24 @@ class EnterNameController extends GetxController {
     }
 
     try {
-      await FirebaseFirestore.instance.collection('quizzes').doc(pin).update({
-        'players': FieldValue.arrayUnion([nickname]),
+      await _firestore
+          .collection('quizzes')
+          .doc(quizId)
+          .collection('participants')
+          .add({
+        'nickname': nickname,
+        'joinedAt': FieldValue.serverTimestamp(),
       });
 
-      Get.toNamed(AppRoute.quizLobbyScreen, arguments: {
-        "pin": pin,
-        "isHost": false
-      });
+      Get.toNamed(
+        AppRoute.quizLobbyScreen,
+        arguments: {
+          'pin': pin,
+          'isHost': false,
+        },
+      );
     } catch (e) {
-      Get.snackbar("Error", "Failed to join quiz: $e");
+      Get.snackbar("Error", e.toString());
     }
   }
 }
