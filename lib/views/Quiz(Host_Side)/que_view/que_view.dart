@@ -8,6 +8,8 @@ import 'package:kahoot_app/views/Quiz(Host_Side)/que_view/que_view_controller.da
 class QuizQuestionView extends GetView<QuizQuestionController> {
   const QuizQuestionView({super.key});
 
+  final String gamePin = "123456";
+
   @override
   Widget build(BuildContext context) {
     return AppBackground(
@@ -47,19 +49,20 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          buildProgressBar(),
+          _buildProgressBar(),
           const SizedBox(height: 20),
-          buildQuestionText(),
+          _buildQuestionText(),
           const SizedBox(height: 20),
-          Expanded(child: buildOptionsList()),
+          Expanded(child: _buildOptionsList()),
           const SizedBox(height: 20),
-          buildNextButton(),
+          // _buildNextButton(),
+          _buildBottomBar(),
         ],
       ),
     );
   }
 
-  Widget buildProgressBar() {
+  Widget _buildProgressBar() {
     return Obx(() {
       double progress = (controller.remainingTime.value / controller.totalTime)
           .clamp(0.0, 1.0);
@@ -75,7 +78,7 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
     });
   }
 
-  Widget buildQuestionText() {
+  Widget _buildQuestionText() {
     return Obx(
       () => Container(
         padding: const EdgeInsets.all(12),
@@ -91,13 +94,13 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
     );
   }
 
-  Widget buildOptionsList() {
+  Widget _buildOptionsList() {
     final optionColors = [Colors.red, Colors.blue, Colors.orange, Colors.green];
 
     final optionIcons = [
       Icons.change_history, // triangle
       Icons.diamond, // diamond
-      Icons.circle, // circle
+      Icons.circle_outlined, // circle
       Icons.crop_square, // square
     ];
 
@@ -144,21 +147,45 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
     );
   }
 
-  Widget buildNextButton() {
-    return ElevatedButton(
-      onPressed: controller.goToNextQuestion,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors().purple,
-        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        elevation: 5,
+  // Widget _buildNextButton() {
+  //   return ElevatedButton(
+  //     onPressed: controller.goToNextQuestion,
+  //     style: ElevatedButton.styleFrom(
+  //       backgroundColor: AppColors().purple,
+  //       padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  //       elevation: 5,
+  //     ),
+  //     child: Text(
+  //       controller.isLastQuestion ? "Finish Quiz" : "Next Question",
+  //       style: TextStyle(
+  //         fontSize: 18,
+  //         color: AppColors().white,
+  //         fontWeight: FontWeight.bold,
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  Widget _buildBottomBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 1, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors().white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 3)),
+        ],
       ),
-      child: Text(
-        controller.isLastQuestion ? "Finish Quiz" : "Next Question",
-        style: TextStyle(
-          fontSize: 18,
-          color: AppColors().white,
-          fontWeight: FontWeight.bold,
+      child: Center(
+        child: Text(
+          "Game PIN:$gamePin",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: AppColors().black,
+          ),
         ),
       ),
     );

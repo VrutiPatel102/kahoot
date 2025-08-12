@@ -14,10 +14,7 @@ class AppBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(imagePath),
-          fit: BoxFit.fill,
-        ),
+        image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.fill),
       ),
       child: Center(child: child),
     );
