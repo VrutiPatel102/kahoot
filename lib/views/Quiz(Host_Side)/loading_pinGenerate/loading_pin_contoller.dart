@@ -15,11 +15,10 @@ class LoadingPinController extends GetxController {
       'createdAt': FieldValue.serverTimestamp(),
     });
 
-    Get.offNamed(AppRoute.quizLobbyScreen, arguments: {
-      "quizTitle": quizTitle,
-      "pin": pin,
-      "isHost": true
-    });
+    Get.toNamed(
+      AppRoute.quizLobbyScreen,
+      arguments: {"quizTitle": quizTitle, "pin": pin, "isHost": true},
+    );
   }
 
   String _generatePin() {
