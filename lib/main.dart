@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoute.splash,
+      initialRoute: AppRoute.queScreen,
       getPages: AppPages.routes,
     );
   }

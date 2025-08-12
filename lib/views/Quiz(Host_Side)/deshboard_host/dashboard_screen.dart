@@ -61,7 +61,7 @@ class HostDashboardView extends StatelessWidget {
                 showHostConfirmationDialog(context, quiz["title"].toString());
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: AppColors().green,
                 shape: RoundedRectangleBorder(),
               ),
               child: Text("Host", style: TextStyle(color: AppColors().white)),
@@ -122,8 +122,10 @@ class HostDashboardView extends StatelessWidget {
   }
 
   Widget _buildQuizTitleField() {
-    return const TextField(
+    return  TextField(
       decoration: InputDecoration(
+        filled: true,
+        fillColor: AppColors().white,
         hintText: "Quiz Title",
         border: OutlineInputBorder(),
       ),

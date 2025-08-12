@@ -1,20 +1,23 @@
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:kahoot_app/routes/app_route.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/que_view/que_view_controller.dart';
 
 class ScoreboardController extends GetxController {
-  var selectedAnswer = (-1).obs;
-  var correctAnswerIndex = 2;
-
-  void selectAnswer(int index) {
-    selectedAnswer.value = index;
-  }
+  QuizQuestionController get _qc => Get.find<QuizQuestionController>();
 
   bool isCorrect(int index) {
-    return index == correctAnswerIndex;
+    return index == _qc.correctAnswerIndex;
   }
 
+  int get userSelectedIndex => _qc.selectedOptionIndex.value;
+  int get correctIndex => _qc.correctAnswerIndex;
+
   void nextBtn() {
-    Get.toNamed(AppRoute.queScreen);
+    if (!_qc.isLastQuestion) {
+      _qc.nextQuestion();
+      Get.offNamed(AppRoute.queScreen);
+    } else {
+      Get.offNamed(AppRoute.finalRankScreen);
+    }
   }
 }
