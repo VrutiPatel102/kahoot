@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/scoreboardScreen',
+      initialRoute: '/dashboardHostSide',
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     );

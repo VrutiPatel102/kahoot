@@ -5,6 +5,8 @@ import 'package:kahoot_app/views/Home/home_screen.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/countdown_host/countdown_binding.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/deshboard_host/dashboard_binding.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/deshboard_host/dashboard_screen.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/final_rank/final_rank_binding.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/final_rank/final_rank_screen.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/loading_pinGenerate/loading_pin.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/loading_pinGenerate/loading_pin_binding.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/que_view/que_view.dart';
@@ -140,6 +142,11 @@ class AppPages {
       name: AppRoute.scoreboardScreen,
       page: () => ScoreboardView(),
       binding: ScoreboardBinding(),
+    ),
+    GetPage(
+      name: AppRoute.finalRankScreen,
+      page: () => FinalRankView(),
+      binding: FinalRankBinding(),
     ),
   ];
 }
