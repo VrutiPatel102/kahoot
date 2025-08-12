@@ -11,6 +11,8 @@ import 'package:kahoot_app/views/Quiz(Host_Side)/que_view/que_view.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/que_view/que_view_binding.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/quiz_lobby_screen/quiz_lobby_bindings.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/quiz_lobby_screen/quiz_lobby_screen.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/scoreboard_view/scoreboard_binding.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/scoreboard_view/scoreboard_view.dart';
 import 'package:kahoot_app/views/create_quiz/create_binding.dart';
 import 'package:kahoot_app/views/create_quiz/create_quiz.dart';
 import 'package:kahoot_app/views/enter_name/enterName_binding.dart';
@@ -133,6 +135,11 @@ class AppPages {
       name: AppRoute.queScreen,
       page: () => QuizQuestionView(),
       binding: QueViewBinding(),
+    ),
+    GetPage(
+      name: AppRoute.scoreboardScreen,
+      page: () => ScoreboardView(),
+      binding: ScoreboardBinding(),
     ),
   ];
 }

@@ -22,4 +22,5 @@ class AppRoute {
 
   static const countdownScreen = '/countdownScreen';
   static const queScreen = '/queScreen';
+  static const scoreboardScreen = '/scoreboardScreen';
 }
