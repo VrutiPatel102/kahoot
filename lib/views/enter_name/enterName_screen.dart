@@ -5,7 +5,7 @@ import 'package:kahoot_app/constants/app_colors.dart';
 import 'package:kahoot_app/constants/app_images.dart';
 import 'package:kahoot_app/views/enter_name/enterName_controller.dart';
 
-class NicknameScreen extends GetView<NickNameController> {
+class NicknameScreen extends GetView<EnterNameController> {
   const NicknameScreen({super.key});
 
   @override
@@ -27,7 +27,7 @@ class NicknameScreen extends GetView<NickNameController> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           _container(),
         ],
       ),
@@ -45,7 +45,11 @@ class NicknameScreen extends GetView<NickNameController> {
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [_nickname(), SizedBox(height: 15), _btn()],
+        children: [
+          _nickname(),
+          const SizedBox(height: 15),
+          _btn(),
+        ],
       ),
     );
   }
@@ -56,7 +60,7 @@ class NicknameScreen extends GetView<NickNameController> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          controller.onEnterName();
+          controller.submitNickname(); // fixed
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors().black,
@@ -82,7 +86,7 @@ class NicknameScreen extends GetView<NickNameController> {
           border: OutlineInputBorder(),
           contentPadding: EdgeInsets.symmetric(vertical: 10),
         ),
-        keyboardType: TextInputType.number,
+        keyboardType: TextInputType.text, // changed to text
       ),
     );
   }

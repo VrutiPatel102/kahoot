@@ -11,5 +11,7 @@ class RegisterController extends GetxController {
     Get.toNamed(AppRoute.login);
   }
 
-  void register() {}
+  void register() {
+    Get.toNamed(AppRoute.login);
+  }
 }

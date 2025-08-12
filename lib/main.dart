@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kahoot_app/routes/app_route.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:kahoot_app/routes/route_generator.dart';
+import 'package:kahoot_app/routes/app_route.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/quizLobbyScreen',
-      getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
-    );
+      initialRoute: AppRoute.splash,
+      getPages: AppPages.routes);
   }
 }

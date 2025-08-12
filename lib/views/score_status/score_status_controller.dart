@@ -18,7 +18,7 @@ class ScoreStatusController extends GetxController {
   }
 
   void simulateLoading() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 3));
 
     QueLoadingController.loopCount++;
 
