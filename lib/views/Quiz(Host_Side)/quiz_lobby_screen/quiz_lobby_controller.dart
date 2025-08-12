@@ -53,14 +53,14 @@ class QuizLobbyController extends GetxController {
         .limit(1)
         .snapshots()
         .listen((snapshot) {
-      if (snapshot.docs.isNotEmpty) {
-        final data = snapshot.docs.first.data();
-        final List playerList = data['players'] ?? [];
-        players.value = List<String>.from(playerList);
-        totalParticipants.value = players.length;
-        quizId = snapshot.docs.first.id;
-      }
-    });
+          if (snapshot.docs.isNotEmpty) {
+            final data = snapshot.docs.first.data();
+            final List playerList = data['players'] ?? [];
+            players.value = List<String>.from(playerList);
+            totalParticipants.value = players.length;
+            quizId = snapshot.docs.first.id;
+          }
+        });
   }
 
   Future<void> addPlayer(String name) async {

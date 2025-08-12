@@ -108,21 +108,34 @@ class LoginScreen extends GetView<LoginController> {
   }
 
   Widget _loginBtn() {
-    return SizedBox(
-      height: 50,
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: controller.onLogin,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors().black,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+    return Obx(() {
+      return SizedBox(
+        height: 50,
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: controller.isLoading.value ? null : controller.onLogin,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors().black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+          child: controller.isLoading.value
+              ? const SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : Text(
+                  'Login',
+                  style: TextStyle(color: AppColors().white, fontSize: 18),
+                ),
         ),
-        child: Text(
-          'Login',
-          style: TextStyle(color: AppColors().white, fontSize: 18),
-        ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _bottomText() {

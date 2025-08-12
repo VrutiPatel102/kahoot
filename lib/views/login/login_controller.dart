@@ -23,10 +23,21 @@ class LoginController extends GetxController {
 
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-
       Get.toNamed(AppRoute.enterPin);
+    } on FirebaseAuthException catch (e) {
+      String message = "Login failed. Please try again.";
+      if (e.code == 'user-not-found') {
+        message = "No account found for that email.";
+      } else if (e.code == 'wrong-password') {
+        message = "Incorrect password.";
+      } else if (e.code == 'invalid-email') {
+        message = "Invalid email address format.";
+      } else if (e.code == 'user-disabled') {
+        message = "This account has been disabled.";
+      }
+      Get.snackbar("Error", message);
     } catch (e) {
-      Get.snackbar("Login Failed", e.toString());
+      Get.snackbar("Error", e.toString());
     } finally {
       isLoading.value = false;
     }
