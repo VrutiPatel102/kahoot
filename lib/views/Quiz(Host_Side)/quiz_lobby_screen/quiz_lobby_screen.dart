@@ -35,7 +35,7 @@ class QuizLobbyView extends GetView<QuizLobbyController> {
       centerTitle: true,
       elevation: 0,
       backgroundColor: Colors.deepPurple.withOpacity(0.8),
-      shape: const RoundedRectangleBorder(
+      shape:  RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
       ),
     );
@@ -66,17 +66,17 @@ class QuizLobbyView extends GetView<QuizLobbyController> {
           BoxShadow(
             color: AppColors().purple,
             blurRadius: 8,
-            offset: const Offset(0, 3),
+            offset:  Offset(0, 3),
           ),
         ],
       ),
       child: Column(
         children: [
-          const Text(
+           Text(
             "Game PIN",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 6),
+           SizedBox(height: 6),
           Obx(
             () => Text(
               controller.pinCode.value,
@@ -105,13 +105,13 @@ class QuizLobbyView extends GetView<QuizLobbyController> {
           children: [
             Text(
               "Participants (${controller.totalParticipants.value})",
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style:  TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+             SizedBox(height: 8),
             Expanded(
               child: ListView.separated(
                 itemCount: controller.players.length,
-                separatorBuilder: (_, __) => const Divider(),
+                separatorBuilder: (_, __) =>  Divider(),
                 itemBuilder: (context, index) {
                   final player = controller.players[index];
                   return ListTile(
@@ -124,7 +124,7 @@ class QuizLobbyView extends GetView<QuizLobbyController> {
                     ),
                     title: Text(
                       player,
-                      style: const TextStyle(fontWeight: FontWeight.w500),
+                      style:  TextStyle(fontWeight: FontWeight.w500),
                     ),
                   );
                 },

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kahoot_app/constants/app.dart';
-import 'package:kahoot_app/constants/app_images.dart';
 import 'package:kahoot_app/constants/app_colors.dart';
-import 'enterPin_controller.dart';
+import 'package:kahoot_app/constants/app_images.dart';
+import 'package:kahoot_app/views/enter_pin/enterPin_controller.dart';
 
 class EnterPin extends GetView<EnterPinController> {
   const EnterPin({super.key});
@@ -39,7 +39,7 @@ class EnterPin extends GetView<EnterPinController> {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           _container(),
         ],
       ),
@@ -57,29 +57,35 @@ class EnterPin extends GetView<EnterPinController> {
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [_pin(), SizedBox(height: 15), _enterBtn()],
+        children: [
+          _pin(),
+          const SizedBox(height: 15),
+          _enterBtn(),
+        ],
       ),
     );
   }
 
   Widget _enterBtn() {
-    return SizedBox(
+    return Obx(() => SizedBox(
       height: 50,
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () {
-          controller.onEnterPin();
-        },
+        onPressed:
+        controller.isLoading.value ? null : () => controller.onEnterPin(),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors().black,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5)),
         ),
-        child: Text(
+        child: controller.isLoading.value
+            ? const CircularProgressIndicator(color: Colors.white)
+            : Text(
           'Enter',
           style: TextStyle(color: AppColors().white, fontSize: 18),
         ),
       ),
-    );
+    ));
   }
 
   Widget _pin() {
