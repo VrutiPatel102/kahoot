@@ -50,11 +50,11 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildProgressBar(),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           _buildQuestionText(),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           Expanded(child: _buildOptionsList()),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           // _buildNextButton(),
           _buildBottomBar(),
         ],
@@ -88,30 +88,34 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
         ),
         child: Text(
           controller.questionText.value,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
 
   Widget _buildOptionsList() {
-    final optionColors = [Colors.red, Colors.blue, Colors.orange, Colors.green];
+    final optionColors = [
+      AppColors().red,
+      AppColors().blue,
+      AppColors().orange,
+      AppColors().green,
+    ];
 
     final optionIcons = [
-      Icons.change_history, // triangle
-      Icons.diamond, // diamond
-      Icons.circle_outlined, // circle
-      Icons.crop_square, // square
+      Icons.change_history,
+      Icons.diamond,
+      Icons.circle_outlined,
+      Icons.crop_square,
     ];
 
     return Obx(
       () => ListView.separated(
         itemCount: controller.options.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        separatorBuilder: (_, __) => SizedBox(height: 12),
         itemBuilder: (context, index) {
           final option = controller.options[index];
           final isSelected = controller.selectedOptionIndex.value == index;
-
           return GestureDetector(
             onTap: () => controller.selectOption(index),
             child: Container(
@@ -120,21 +124,23 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
                 color: optionColors[index].withOpacity(isSelected ? 0.8 : 1.0),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSelected ? Colors.white : Colors.transparent,
+                  color: isSelected
+                      ? AppColors().white
+                      : AppColors().transparent,
                   width: 3,
                 ),
               ),
               child: Row(
                 children: [
-                  Icon(optionIcons[index], color: Colors.white, size: 28),
-                  const SizedBox(width: 12),
+                  Icon(optionIcons[index], color: AppColors().white, size: 28),
+                  SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       option,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppColors().white,
                       ),
                     ),
                   ),
