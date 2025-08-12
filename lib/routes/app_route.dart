@@ -12,10 +12,14 @@ class AppRoute {
   static const queLoading = '/queLoading';
   static const showOption = '/showOption';
 
+  static const scoreStatus = '/scoreStatus';
+  static const userRank = '/userRankScreen';
+
   static const dashboardHostSide = '/dashboardHostSide';
   static const loadingHostSide = '/loadingHostSide';
 
   static const quizLobbyScreen = '/quizLobbyScreen';
-  static const scoreStatus = '/scoreStatus';
-  static const userRank = '/userRankScreen';
+
+  static const countdownScreen = '/countdownScreen';
+  static const queScreen = '/queScreen';
 }
