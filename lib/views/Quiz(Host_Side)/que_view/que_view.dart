@@ -92,34 +92,50 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
   }
 
   Widget buildOptionsList() {
+    final optionColors = [Colors.red, Colors.blue, Colors.orange, Colors.green];
+
+    final optionIcons = [
+      Icons.change_history, // triangle
+      Icons.diamond, // diamond
+      Icons.circle, // circle
+      Icons.crop_square, // square
+    ];
+
     return Obx(
       () => ListView.separated(
         itemCount: controller.options.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 10),
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           final option = controller.options[index];
           final isSelected = controller.selectedOptionIndex.value == index;
+
           return GestureDetector(
             onTap: () => controller.selectOption(index),
             child: Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors().purple.withOpacity(0.8)
-                    : Colors.white.withOpacity(0.85),
+                color: optionColors[index].withOpacity(isSelected ? 0.8 : 1.0),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSelected ? AppColors().purple : Colors.transparent,
-                  width: 2,
+                  color: isSelected ? Colors.white : Colors.transparent,
+                  width: 3,
                 ),
               ),
-              child: Text(
-                option,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: isSelected ? Colors.white : Colors.black,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
+              child: Row(
+                children: [
+                  Icon(optionIcons[index], color: Colors.white, size: 28),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      option,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           );

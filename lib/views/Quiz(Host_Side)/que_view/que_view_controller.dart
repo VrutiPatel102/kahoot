@@ -11,7 +11,6 @@ class QuizQuestionController extends GetxController {
 
   var selectedOptionIndex = (-1).obs; // -1 means nothing selected
 
-  // Sample question list
   final questions = [
     {
       "question": "What is Flutter?",
