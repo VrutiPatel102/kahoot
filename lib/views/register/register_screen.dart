@@ -73,7 +73,6 @@ class RegisterScreen extends GetView<RegisterController> {
           _textField(
             hintText: 'Username',
             controller: controller.usernameController,
-            obscureText: true,
           ),
           SizedBox(height: 10),
           _textField(
