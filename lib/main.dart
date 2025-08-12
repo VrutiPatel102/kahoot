@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kahoot_app/routes/app_route.dart';
 import 'package:kahoot_app/routes/route_generator.dart';
 
 void main() {
@@ -13,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: '/dashboardHostSide',
+      initialRoute: '/splash',
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     );
