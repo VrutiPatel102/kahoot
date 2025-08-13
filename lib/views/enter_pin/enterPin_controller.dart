@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kahoot_app/constants/app.dart';
-import 'package:kahoot_app/constants/app_images.dart';
-import 'package:kahoot_app/constants/app_colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:kahoot_app/routes/app_route.dart';
 
 class EnterPinController extends GetxController {
   TextEditingController pinController = TextEditingController();
@@ -11,7 +9,6 @@ class EnterPinController extends GetxController {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// Called when player enters a PIN
   Future<void> onEnterPin() async {
     final enteredPin = pinController.text.trim();
 
@@ -23,6 +20,7 @@ class EnterPinController extends GetxController {
     isLoading.value = true;
 
     try {
+      // Search for quiz by its 'pin' field
       final snapshot = await _firestore
           .collection('quizzes')
           .where('pin', isEqualTo: enteredPin)
@@ -35,11 +33,18 @@ class EnterPinController extends GetxController {
         return;
       }
 
-      // If valid PIN found, navigate
+      // Get quiz data & ID
+      final quizDoc = snapshot.docs.first;
+      final quizData = quizDoc.data();
+      final quizId = quizDoc.id;
+
+      // Navigate to nickname screen
       Get.toNamed(
-        '/enterNickname', // Replace with your actual nickname route
+        AppRoute.enterNickName,
         arguments: {
           'pin': enteredPin,
+          'quizId': quizId,
+          'quizTitle': quizData['quizTitle'] ?? 'Quiz',
           'isHost': false,
         },
       );
@@ -50,9 +55,7 @@ class EnterPinController extends GetxController {
     }
   }
 
-  /// Host login button action
   void login() {
-    Get.toNamed('/login'); // Replace with your actual login route
+    Get.toNamed(AppRoute.login);
   }
 }
-

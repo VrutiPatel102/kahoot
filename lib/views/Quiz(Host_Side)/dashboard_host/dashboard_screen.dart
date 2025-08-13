@@ -3,7 +3,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:kahoot_app/constants/app.dart';
 import 'package:kahoot_app/constants/app_colors.dart';
-import 'package:kahoot_app/views/Quiz(Host_Side)/deshboard_host/dashboard_controller.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/dashboard_host/dashboard_controller.dart';
 
 class HostDashboardView extends StatelessWidget {
   const HostDashboardView({super.key});
@@ -122,7 +122,7 @@ class HostDashboardView extends StatelessWidget {
   }
 
   Widget _buildQuizTitleField() {
-    return  TextField(
+    return TextField(
       decoration: InputDecoration(
         filled: true,
         fillColor: AppColors().white,

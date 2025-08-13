@@ -22,8 +22,18 @@ class LoginController extends GetxController {
     isLoading.value = true;
 
     try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-      Get.toNamed(AppRoute.enterPin);
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      final user = userCredential.user;
+
+      if (user == null) {
+        Get.snackbar("Error", "Login failed. Please try again.");
+        return;
+      }
+      Get.offAllNamed(AppRoute.dashboardHostSide);
     } on FirebaseAuthException catch (e) {
       String message = "Login failed. Please try again.";
       if (e.code == 'user-not-found') {
