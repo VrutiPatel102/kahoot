@@ -3,8 +3,6 @@ import 'package:kahoot_app/routes/app_route.dart';
 import 'package:kahoot_app/views/Home/home_binding.dart';
 import 'package:kahoot_app/views/Home/home_screen.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/countdown_host/countdown_binding.dart';
-import 'package:kahoot_app/views/Quiz(Host_Side)/deshboard_host/dashboard_binding.dart';
-import 'package:kahoot_app/views/Quiz(Host_Side)/deshboard_host/dashboard_screen.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/final_rank/final_rank_binding.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/final_rank/final_rank_screen.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/loading_pinGenerate/loading_pin.dart';
@@ -23,9 +21,6 @@ import 'package:kahoot_app/views/enter_pin/enterPin_binding.dart';
 import 'package:kahoot_app/views/enter_pin/enter_pin.dart';
 import 'package:kahoot_app/views/login/login_binding.dart';
 import 'package:kahoot_app/views/login/login_screen.dart';
-
-// import 'package:kahoot_app/views/rank_screen/rank_binding.dart';
-// import 'package:kahoot_app/views/rank_screen/rank_screen.dart';
 import 'package:kahoot_app/views/register/register_binding.dart';
 import 'package:kahoot_app/views/register/register_screen.dart';
 import 'package:kahoot_app/views/get_ready_loading/get_ready_loading.dart';
@@ -45,6 +40,8 @@ import 'package:kahoot_app/views/user_rank/user_rank_screen.dart';
 
 import '../views/Quiz(Host_Side)/countdown_host/count_down_screen.dart'
     show CountdownView;
+import '../views/Quiz(Host_Side)/dashboard_host/dashboard_binding.dart';
+import '../views/Quiz(Host_Side)/dashboard_host/dashboard_screen.dart';
 
 class AppPages {
   static final routes = [
