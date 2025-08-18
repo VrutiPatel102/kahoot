@@ -22,6 +22,7 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
 
   AppBar buildAppBar() {
     return AppBar(
+      automaticallyImplyLeading: false,
       title: Obx(
         () => Text(
           "Question ${controller.currentQuestionIndex.value + 1} of ${controller.totalQuestions}",
