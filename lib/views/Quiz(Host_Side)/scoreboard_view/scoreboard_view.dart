@@ -106,8 +106,8 @@ class ScoreboardView extends GetView<ScoreboardController> {
     final optionColors = [
       AppColors().red,
       AppColors().blue,
-      AppColors().orange,
       AppColors().green,
+      AppColors().orange,
     ];
 
     final optionIcons = [

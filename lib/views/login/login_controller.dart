@@ -8,8 +8,6 @@ class LoginController extends GetxController {
   TextEditingController passwordController = TextEditingController();
   var isLoading = false.obs;
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   Future<void> onLogin() async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
@@ -22,10 +20,8 @@ class LoginController extends GetxController {
     isLoading.value = true;
 
     try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
 
       final user = userCredential.user;
 

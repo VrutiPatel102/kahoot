@@ -98,8 +98,8 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
     final optionColors = [
       AppColors().red,
       AppColors().blue,
-      AppColors().orange,
       AppColors().green,
+      AppColors().orange,
     ];
 
     final optionIcons = [

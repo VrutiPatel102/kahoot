@@ -11,10 +11,7 @@ class LoadingPinScreen extends GetView<LoadingPinController> {
 
   @override
   Widget build(BuildContext context) {
-    final args = Get.arguments ?? {};
-    final quizTitle = args["quizTitle"] ?? "Quiz";
-
-    controller.hostQuiz(quizTitle);
+    final quizTitle = controller.args["quizTitle"] ?? "Quiz";
 
     return Scaffold(
       body: AppBackground(
@@ -35,6 +32,19 @@ class LoadingPinScreen extends GetView<LoadingPinController> {
                 color: AppColors().white,
               ),
               textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            Obx(
+              () => controller.pin.value.isEmpty
+                  ? const SizedBox.shrink()
+                  : Text(
+                      "PIN: ${controller.pin.value}",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors().white,
+                      ),
+                    ),
             ),
           ],
         ),

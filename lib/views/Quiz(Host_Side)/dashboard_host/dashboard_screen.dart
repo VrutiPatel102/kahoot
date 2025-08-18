@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:kahoot_app/constants/app.dart';
@@ -26,8 +28,8 @@ class HostDashboardView extends StatelessWidget {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      title: const Text("Host Dashboard"),
-      bottom: const TabBar(
+      title: Text("Host Dashboard"),
+      bottom: TabBar(
         tabs: [
           Tab(text: "View Quizzes"),
           Tab(text: "Create Quiz"),
@@ -38,47 +40,125 @@ class HostDashboardView extends StatelessWidget {
 
   /// ------------------ VIEW QUIZZES TAB ------------------
   Widget _buildViewQuizzesTab() {
-    final quizzes = [
-      {"title": "Funny Ques", "questions": List.filled(10, {})},
-      {"title": "General Knowledge", "questions": List.filled(5, {})},
-    ];
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('quizzes').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    if (quizzes.isEmpty) {
-      return Center(child: Text("No quizzes found"));
-    }
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(child: Text("No quizzes found"));
+        }
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(8),
-      itemCount: quizzes.length,
-      itemBuilder: (context, index) {
-        final quiz = quizzes[index];
-        return Card(
-          child: ListTile(
-            title: Text(quiz["title"].toString()),
-            subtitle: Text("${(quiz["questions"] as List).length} questions"),
-            trailing: ElevatedButton(
-              onPressed: () {
-                showHostConfirmationDialog(context, quiz["title"].toString());
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors().green,
-                shape: RoundedRectangleBorder(),
+        var docs = snapshot.data!.docs;
+
+        return ListView.builder(
+          itemCount: docs.length,
+          itemBuilder: (context, index) {
+            final doc = docs[index];
+            final data = doc.data() as Map<String, dynamic>;
+            final quizTitle = data['title'] ?? 'Untitled Quiz';
+
+            return ExpansionTile(
+              title: Text(
+                "${index + 1}) $quizTitle",
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              child: Text("Host", style: TextStyle(color: AppColors().white)),
-            ),
-          ),
+              children: [
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('quizzes')
+                      .doc(doc.id)
+                      .collection('questions')
+                      .snapshots(),
+                  builder: (context, questionSnapshot) {
+                    if (questionSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!questionSnapshot.hasData ||
+                        questionSnapshot.data!.docs.isEmpty) {
+                      return const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text("No questions added yet"),
+                      );
+                    }
+
+                    return Column(
+                      children: questionSnapshot.data!.docs.map((qDoc) {
+                        final qData = qDoc.data() as Map<String, dynamic>;
+                        final questionText =
+                            qData['questionText'] ?? 'Untitled Question';
+                        final options = List<String>.from(
+                          qData['options'] ?? [],
+                        );
+                        final correctIndex = qData['correctIndex'] ?? 0;
+
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          child: ListTile(
+                            title: Text(questionText),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                for (int i = 0; i < options.length; i++)
+                                  Text(
+                                    "${i + 1}. ${options[i]}",
+                                    style: TextStyle(
+                                      color: i == correctIndex
+                                          ? AppColors().green
+                                          : AppColors().black,
+                                      fontWeight: i == correctIndex
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    showHostConfirmationDialog(context, quizTitle, doc.id);
+                  },
+                  icon: Icon(Icons.play_arrow, color: AppColors().white),
+                  label: Text(
+                    "Host This Quiz",
+                    style: TextStyle(color: AppColors().white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors().green,
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
-  void showHostConfirmationDialog(BuildContext context, String quizTitle) {
+  void showHostConfirmationDialog(
+    BuildContext context,
+    String quizTitle,
+    String quizId,
+  ) {
     final controller = Get.find<HostDashboardController>();
 
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Host Quiz"),
+        title: Text("Host Quiz"),
         content: Text("Are you sure you want to host '$quizTitle'?"),
         actions: [
           TextButton(
@@ -88,7 +168,7 @@ class HostDashboardView extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              controller.hostQuiz(quizTitle);
+              controller.hostQuiz(quizTitle, quizId); // Pass quizId here
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors().green),
             child: Text(

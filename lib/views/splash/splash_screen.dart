@@ -17,10 +17,10 @@ class SplashScreen extends GetView<SplashController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.flash_on, size: 100, color: AppColors().white),
+            Icon(Icons.lightbulb, size: 100, color: AppColors().yellow),
             SizedBox(height: 20),
             Text(
-              'MyApp ',
+              'QuizTime',
               style: TextStyle(fontSize: 28, color: AppColors().white),
             ),
           ],

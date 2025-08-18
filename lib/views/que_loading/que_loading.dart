@@ -42,10 +42,7 @@ class QueLoadingScreen extends GetView<QueLoadingController> {
   }
 
   Widget _loadingIndicator() {
-    return CircularProgressIndicator(
-      color: AppColors().white,
-      strokeWidth: 8,
-    );
+    return CircularProgressIndicator(color: AppColors().white, strokeWidth: 8);
   }
 
   Widget _loadingText() {

@@ -2,6 +2,7 @@ import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:kahoot_app/routes/app_route.dart';
 import 'package:kahoot_app/views/Home/home_binding.dart';
 import 'package:kahoot_app/views/Home/home_screen.dart';
+import 'package:kahoot_app/views/Quiz(Host_Side)/countdown_host/count_down_screen.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/countdown_host/countdown_binding.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/final_rank/final_rank_binding.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/final_rank/final_rank_screen.dart';
@@ -37,9 +38,6 @@ import 'package:kahoot_app/views/splash/splash_binding.dart';
 import 'package:kahoot_app/views/splash/splash_screen.dart';
 import 'package:kahoot_app/views/user_rank/user_rank_binding.dart';
 import 'package:kahoot_app/views/user_rank/user_rank_screen.dart';
-
-import '../views/Quiz(Host_Side)/countdown_host/count_down_screen.dart'
-    show CountdownView;
 import '../views/Quiz(Host_Side)/dashboard_host/dashboard_binding.dart';
 import '../views/Quiz(Host_Side)/dashboard_host/dashboard_screen.dart';
 

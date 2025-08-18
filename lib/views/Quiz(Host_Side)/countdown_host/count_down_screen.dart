@@ -91,9 +91,9 @@ class CountdownView extends GetView<CountdownController> {
       child: Obx(() {
         return FadeIn(
           key: ValueKey(controller.countdown.value),
-          duration: const Duration(milliseconds: 800),
+          duration: Duration(milliseconds: 800),
           child: ZoomIn(
-            duration: const Duration(milliseconds: 800),
+            duration: Duration(milliseconds: 800),
             child: _buildCountdownContainer(),
           ),
         );

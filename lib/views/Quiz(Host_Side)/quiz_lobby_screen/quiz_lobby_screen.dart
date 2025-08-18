@@ -105,13 +105,13 @@ class QuizLobbyView extends GetView<QuizLobbyController> {
           children: [
             Text(
               "Participants (${controller.totalParticipants.value})",
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Expanded(
               child: ListView.separated(
                 itemCount: controller.players.length,
-                separatorBuilder: (_, __) => const Divider(),
+                separatorBuilder: (_, __) => Divider(),
                 itemBuilder: (context, index) {
                   final player = controller.players[index];
                   return ListTile(
@@ -124,7 +124,7 @@ class QuizLobbyView extends GetView<QuizLobbyController> {
                     ),
                     title: Text(
                       player,
-                      style: const TextStyle(fontWeight: FontWeight.w500),
+                      style: TextStyle(fontWeight: FontWeight.w500),
                     ),
                   );
                 },
@@ -137,22 +137,30 @@ class QuizLobbyView extends GetView<QuizLobbyController> {
   }
 
   Widget buildStartButton() {
-    return ElevatedButton(
-      onPressed: controller.startQuiz,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors().purple,
-        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        elevation: 5,
-      ),
-      child: Text(
-        "Start Quiz",
-        style: TextStyle(
-          fontSize: 18,
-          color: AppColors().white,
-          fontWeight: FontWeight.bold,
+    return Obx(() {
+      final hasPlayers = controller.players.isNotEmpty;
+
+      return ElevatedButton(
+        onPressed: hasPlayers ? controller.startQuiz : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: hasPlayers
+              ? AppColors().purple
+              : AppColors().grey300,
+          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: hasPlayers ? 5 : 0,
         ),
-      ),
-    );
+        child: Text(
+          "Start Quiz",
+          style: TextStyle(
+            fontSize: 18,
+            color: AppColors().white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    });
   }
 }

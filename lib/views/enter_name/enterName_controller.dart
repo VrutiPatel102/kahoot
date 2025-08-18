@@ -9,8 +9,6 @@ class EnterNickNameController extends GetxController {
   late String pin;
   late String quizId;
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   @override
   void onInit() {
     super.onInit();
@@ -32,8 +30,7 @@ class EnterNickNameController extends GetxController {
     }
 
     try {
-      // Add participant to Firestore
-      await _firestore
+      await FirebaseFirestore.instance
           .collection('quizzes')
           .doc(quizId)
           .collection('participants')
@@ -42,13 +39,9 @@ class EnterNickNameController extends GetxController {
             'joinedAt': FieldValue.serverTimestamp(),
           });
 
-      // Navigate to ShowNickname screen with quizId
       Get.toNamed(
         AppRoute.showNickName,
-        arguments: {
-          'fullName': nickname,
-          'quizId': quizId, // Pass quizId for listening to status
-        },
+        arguments: {'fullName': nickname, 'quizId': quizId},
       );
     } catch (e) {
       Get.snackbar("Error", e.toString());

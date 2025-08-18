@@ -56,7 +56,7 @@ class LoginScreen extends GetView<LoginController> {
 
   Widget _container() {
     return Container(
-      padding: const EdgeInsets.all(15),
+      padding: EdgeInsets.all(15),
       width: 350,
       decoration: BoxDecoration(
         color: AppColors().white,
@@ -96,12 +96,9 @@ class LoginScreen extends GetView<LoginController> {
         keyboardType: keyboardType,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: const TextStyle(fontSize: 16),
-          border: const OutlineInputBorder(),
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 10,
-            horizontal: 12,
-          ),
+          hintStyle: TextStyle(fontSize: 16),
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
         ),
       ),
     );
@@ -121,12 +118,12 @@ class LoginScreen extends GetView<LoginController> {
             ),
           ),
           child: controller.isLoading.value
-              ? const SizedBox(
+              ? SizedBox(
                   height: 24,
                   width: 24,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Colors.white,
+                    color: AppColors().white,
                   ),
                 )
               : Text(
@@ -145,7 +142,7 @@ class LoginScreen extends GetView<LoginController> {
         text: TextSpan(
           style: TextStyle(fontSize: 14, color: AppColors().white),
           children: [
-            const TextSpan(text: "Don't have an account? "),
+            TextSpan(text: "Don't have an account? "),
             TextSpan(
               text: "Register",
               style: const TextStyle(

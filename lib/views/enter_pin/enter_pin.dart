@@ -32,14 +32,14 @@ class EnterPin extends GetView<EnterPinController> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "MyApp!",
+            "Quiz Time!",
             style: TextStyle(
               fontSize: 50,
               color: AppColors().white,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 30),
+          SizedBox(height: 30),
           _container(),
         ],
       ),
@@ -48,7 +48,7 @@ class EnterPin extends GetView<EnterPinController> {
 
   Widget _container() {
     return Container(
-      padding: const EdgeInsets.all(15),
+      padding: EdgeInsets.all(15),
       height: 170,
       width: 350,
       decoration: BoxDecoration(
@@ -57,35 +57,35 @@ class EnterPin extends GetView<EnterPinController> {
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _pin(),
-          const SizedBox(height: 15),
-          _enterBtn(),
-        ],
+        children: [_pin(), SizedBox(height: 15), _enterBtn()],
       ),
     );
   }
 
   Widget _enterBtn() {
-    return Obx(() => SizedBox(
-      height: 50,
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed:
-        controller.isLoading.value ? null : () => controller.onEnterPin(),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors().black,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5)),
-        ),
-        child: controller.isLoading.value
-            ? const CircularProgressIndicator(color: Colors.white)
-            : Text(
-          'Enter',
-          style: TextStyle(color: AppColors().white, fontSize: 18),
+    return Obx(
+      () => SizedBox(
+        height: 50,
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: controller.isLoading.value
+              ? null
+              : () => controller.onEnterPin(),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors().black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+          child: controller.isLoading.value
+              ? CircularProgressIndicator(color: AppColors().white)
+              : Text(
+                  'Enter',
+                  style: TextStyle(color: AppColors().white, fontSize: 18),
+                ),
         ),
       ),
-    ));
+    );
   }
 
   Widget _pin() {
@@ -94,7 +94,7 @@ class EnterPin extends GetView<EnterPinController> {
       child: TextField(
         controller: controller.pinController,
         textAlign: TextAlign.center,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           hintText: 'Game PIN',
           hintStyle: TextStyle(fontSize: 18),
           border: OutlineInputBorder(),
@@ -112,10 +112,10 @@ class EnterPin extends GetView<EnterPinController> {
         text: TextSpan(
           style: TextStyle(fontSize: 14, color: AppColors().white),
           children: [
-            const TextSpan(text: "Create your own quiz? "),
+            TextSpan(text: "Create your own quiz? "),
             TextSpan(
               text: "Login",
-              style: const TextStyle(
+              style: TextStyle(
                 decoration: TextDecoration.underline,
                 fontWeight: FontWeight.bold,
               ),
