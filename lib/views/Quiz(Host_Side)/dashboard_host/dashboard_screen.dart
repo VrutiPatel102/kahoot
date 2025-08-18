@@ -44,11 +44,11 @@ class HostDashboardView extends StatelessWidget {
       stream: FirebaseFirestore.instance.collection('quizzes').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator());
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("No quizzes found"));
+          return Center(child: Text("No quizzes found"));
         }
 
         var docs = snapshot.data!.docs;
@@ -63,7 +63,7 @@ class HostDashboardView extends StatelessWidget {
             return ExpansionTile(
               title: Text(
                 "${index + 1}) $quizTitle",
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               children: [
                 StreamBuilder<QuerySnapshot>(
@@ -75,17 +75,16 @@ class HostDashboardView extends StatelessWidget {
                   builder: (context, questionSnapshot) {
                     if (questionSnapshot.connectionState ==
                         ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
+                      return Center(child: CircularProgressIndicator());
                     }
 
                     if (!questionSnapshot.hasData ||
                         questionSnapshot.data!.docs.isEmpty) {
-                      return const Padding(
+                      return Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text("No questions added yet"),
                       );
                     }
-
                     return Column(
                       children: questionSnapshot.data!.docs.map((qDoc) {
                         final qData = qDoc.data() as Map<String, dynamic>;
@@ -97,7 +96,7 @@ class HostDashboardView extends StatelessWidget {
                         final correctIndex = qData['correctIndex'] ?? 0;
 
                         return Card(
-                          margin: const EdgeInsets.symmetric(
+                          margin: EdgeInsets.symmetric(
                             horizontal: 10,
                             vertical: 5,
                           ),
@@ -108,13 +107,13 @@ class HostDashboardView extends StatelessWidget {
                               children: [
                                 for (int i = 0; i < options.length; i++)
                                   Text(
-                                    "${i + 1}. ${options[i]}",
+                                    "(${i + 1}) ${options[i]}",
                                     style: TextStyle(
                                       color: i == correctIndex
                                           ? AppColors().green
                                           : AppColors().black,
                                       fontWeight: i == correctIndex
-                                          ? FontWeight.bold
+                                          ? FontWeight.w700
                                           : FontWeight.normal,
                                     ),
                                   ),
@@ -184,7 +183,7 @@ class HostDashboardView extends StatelessWidget {
   /// ------------------ CREATE QUIZ TAB ------------------
   Widget _buildCreateQuizTab(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(16.0),
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -236,13 +235,13 @@ class HostDashboardView extends StatelessWidget {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Add Question"),
+        title: Text("Add Question"),
         content: SingleChildScrollView(
           child: Column(
             children: [
               TextField(
                 controller: questionController,
-                decoration: const InputDecoration(labelText: "Question"),
+                decoration: InputDecoration(labelText: "Question"),
               ),
               for (int i = 0; i < 4; i++)
                 TextField(
@@ -270,14 +269,14 @@ class HostDashboardView extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+            child: Text("Cancel"),
           ),
           ElevatedButton(
             onPressed: () {
               // Add question logic will go here
               Navigator.pop(context);
             },
-            child: const Text("Add"),
+            child: Text("Add"),
           ),
         ],
       ),

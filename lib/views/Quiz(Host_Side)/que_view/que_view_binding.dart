@@ -6,7 +6,8 @@ class QueViewBinding extends Bindings {
   void dependencies() {
     final args = Get.arguments ?? {};
     final quizId = args["quizId"] ?? "";
+    final pin = args["pin"] ?? "";
 
-    Get.lazyPut(() => QuizQuestionController(quizId: quizId));
+    Get.lazyPut(() => QuizQuestionController(quizId: quizId, pin: pin));
   }
 }

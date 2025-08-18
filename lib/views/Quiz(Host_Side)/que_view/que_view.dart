@@ -8,8 +8,6 @@ import 'package:kahoot_app/views/Quiz(Host_Side)/que_view/que_view_controller.da
 class QuizQuestionView extends GetView<QuizQuestionController> {
   const QuizQuestionView({super.key});
 
-  final String gamePin = "123456";
-
   @override
   Widget build(BuildContext context) {
     return AppBackground(
@@ -186,7 +184,7 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
       ),
       child: Center(
         child: Text(
-          "Game PIN:$gamePin",
+          "Game PIN:${controller.pin}",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,

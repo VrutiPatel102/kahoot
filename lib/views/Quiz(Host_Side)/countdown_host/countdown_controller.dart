@@ -30,6 +30,7 @@ class CountdownController extends GetxController {
             "quizId": quizId,
             "quizTitle": quizTitle,
             "isHost": isHost,
+            "pin": Get.arguments["pin"],
           },
         );
       }
