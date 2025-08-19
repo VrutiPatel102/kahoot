@@ -7,8 +7,6 @@ class EnterPinController extends GetxController {
   TextEditingController pinController = TextEditingController();
   var isLoading = false.obs;
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   Future<void> onEnterPin() async {
     final enteredPin = pinController.text.trim();
 
@@ -20,8 +18,7 @@ class EnterPinController extends GetxController {
     isLoading.value = true;
 
     try {
-      // Search for quiz by its 'pin' field
-      final snapshot = await _firestore
+      final snapshot = await FirebaseFirestore.instance
           .collection('quizzes')
           .where('pin', isEqualTo: enteredPin)
           .limit(1)
@@ -38,7 +35,6 @@ class EnterPinController extends GetxController {
       final quizData = quizDoc.data();
       final quizId = quizDoc.id;
 
-      // Navigate to nickname screen
       Get.toNamed(
         AppRoute.enterNickName,
         arguments: {

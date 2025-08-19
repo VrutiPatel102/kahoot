@@ -20,14 +20,14 @@ class NicknameScreen extends GetView<EnterNickNameController> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "MyApp!",
+            "Quiz Time!",
             style: TextStyle(
               fontSize: 50,
               color: AppColors().white,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 30),
+          SizedBox(height: 30),
           _container(),
         ],
       ),
@@ -36,7 +36,7 @@ class NicknameScreen extends GetView<EnterNickNameController> {
 
   Widget _container() {
     return Container(
-      padding: const EdgeInsets.all(15),
+      padding: EdgeInsets.all(15),
       height: 170,
       width: 350,
       decoration: BoxDecoration(
@@ -45,11 +45,7 @@ class NicknameScreen extends GetView<EnterNickNameController> {
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _nickname(),
-          const SizedBox(height: 15),
-          _btn(),
-        ],
+        children: [_nickname(), SizedBox(height: 15), _btn()],
       ),
     );
   }
@@ -60,7 +56,7 @@ class NicknameScreen extends GetView<EnterNickNameController> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          controller.onSubmitNickname(); // ✅ fixed method name
+          controller.onSubmitNickname();
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors().black,
@@ -78,9 +74,9 @@ class NicknameScreen extends GetView<EnterNickNameController> {
     return SizedBox(
       height: 50,
       child: TextField(
-        controller: controller.nicknameController, // ✅ fixed controller name
+        controller: controller.nicknameController,
         textAlign: TextAlign.center,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           hintText: 'Nickname',
           hintStyle: TextStyle(fontSize: 18),
           border: OutlineInputBorder(),

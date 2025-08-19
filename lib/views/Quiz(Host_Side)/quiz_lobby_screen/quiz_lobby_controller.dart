@@ -4,12 +4,15 @@ import 'package:kahoot_app/routes/app_route.dart';
 
 class QuizLobbyController extends GetxController {
   var quizTitle = "".obs;
-  var pinCode = "".obs;
+  var pinCode = "".obs; // The correct pin for this quiz
+  var enteredPin = "".obs; // Pin entered by the participant
   var players = <String>[].obs;
   var totalParticipants = 0.obs;
   var isHost = false;
   late String playerName;
   late String quizId;
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void onInit() {
@@ -21,34 +24,68 @@ class QuizLobbyController extends GetxController {
     quizId = args["quizId"] ?? "";
     isHost = args["isHost"] ?? false;
     playerName = args["playerName"] ?? "";
+    enteredPin.value = args["enteredPin"] ?? ""; // Participant input pin
 
     if (quizId.isEmpty) {
       Get.snackbar("Error", "Invalid quiz ID");
       return;
     }
 
-    // Host joins automatically if no playerName (optional)
-    if (!isHost && playerName.isNotEmpty) {
-      _addPlayer(playerName);
+    // If host, clear old participants for a fresh session
+    if (isHost) {
+      _clearOldParticipants();
     }
 
-    // Listen to participants in real-time
+    // If participant, add with pin check
+    if (!isHost && playerName.isNotEmpty) {
+      _addPlayerWithPin(playerName, enteredPin.value);
+    }
+
     _listenToParticipants();
+    _listenToQuizStart();
   }
 
-  // Add participant to Firestore (if joining)
-  Future<void> _addPlayer(String name) async {
-    final docRef = FirebaseFirestore.instance.collection('quizzes').doc(quizId);
+  /// Host clears all old participants for a fresh session
+  Future<void> _clearOldParticipants() async {
+    final participantsRef = _firestore
+        .collection('quizzes')
+        .doc(quizId)
+        .collection('participants');
 
-    // Add to players array
-    await docRef.update({
-      'players': FieldValue.arrayUnion([name]),
-    });
+    final snapshot = await participantsRef.get();
+    for (var doc in snapshot.docs) {
+      await doc.reference.delete();
+    }
   }
 
-  // Listen to live participants
+  /// Add player only if the entered pin matches the quiz pin
+  Future<void> _addPlayerWithPin(String name, String pin) async {
+    if (pin != pinCode.value) {
+      Get.snackbar("Error", "Incorrect pin! Please try again.");
+      return;
+    }
+
+    final participantsRef = _firestore
+        .collection('quizzes')
+        .doc(quizId)
+        .collection('participants');
+
+    final existing = await participantsRef
+        .where('nickname', isEqualTo: name)
+        .limit(1)
+        .get();
+
+    if (existing.docs.isEmpty) {
+      await participantsRef.add({
+        'nickname': name,
+        'joinedAt': FieldValue.serverTimestamp(),
+      });
+    }
+  }
+
+  /// Listen for participant changes in real-time
   void _listenToParticipants() {
-    FirebaseFirestore.instance
+    _firestore
         .collection('quizzes')
         .doc(quizId)
         .collection('participants')
@@ -64,36 +101,56 @@ class QuizLobbyController extends GetxController {
         });
   }
 
-  // Start quiz (host only)
+  /// Host starts the quiz
   Future<void> startQuiz() async {
     if (!isHost) return;
 
-    await FirebaseFirestore.instance.collection('quizzes').doc(quizId).update({
-      'status': 'started',
-    });
+    if (players.isEmpty) {
+      Get.snackbar("Error", "Cannot start quiz without participants!");
+      return;
+    }
 
-    Get.toNamed(
-      AppRoute.queScreen,
-      arguments: {
-        "quizTitle": quizTitle.value,
-        "pin": pinCode.value,
-        "quizId": quizId,
-        "isHost": true,
-      },
-    );
+    await _firestore.collection('quizzes').doc(quizId).update({
+      'status': 'started',
+      'startedAt': FieldValue.serverTimestamp(),
+    });
   }
 
+  /// Listen for quiz status changes and navigate participants
+  void _listenToQuizStart() {
+    _firestore.collection('quizzes').doc(quizId).snapshots().listen((doc) {
+      if (doc.exists && doc.data()?['status'] == 'started') {
+        Get.toNamed(
+          AppRoute.countdownScreen,
+          arguments: {
+            "quizTitle": quizTitle.value,
+            "pin": pinCode.value,
+            "quizId": quizId,
+            "isHost": isHost,
+          },
+        );
+      }
+    });
+  }
+
+  /// Cleanup player on leaving
   @override
   void onClose() async {
-    // Optional: Remove player on exit (if not host)
     if (!isHost && playerName.isNotEmpty) {
-      final docRef = FirebaseFirestore.instance
+      final participantsRef = _firestore
           .collection('quizzes')
-          .doc(quizId);
-      await docRef.update({
-        'players': FieldValue.arrayRemove([playerName]),
-      });
+          .doc(quizId)
+          .collection('participants');
+
+      final snapshot = await participantsRef
+          .where('nickname', isEqualTo: playerName)
+          .get();
+
+      for (var doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
     }
+
     super.onClose();
   }
 }
