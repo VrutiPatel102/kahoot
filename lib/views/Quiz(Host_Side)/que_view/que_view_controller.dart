@@ -5,7 +5,7 @@ import 'package:kahoot_app/routes/app_route.dart';
 
 class QuizQuestionController extends GetxController {
   final String quizId;
-  final String pin; // 👈 added pin
+  final String pin;
 
   QuizQuestionController({required this.quizId, required this.pin});
 
@@ -24,9 +24,20 @@ class QuizQuestionController extends GetxController {
   int get totalQuestions => questions.length;
   bool get isLastQuestion => currentQuestionIndex.value == totalQuestions - 1;
 
+  /// ✅ current question
+  Map<String, dynamic> get currentQuestion =>
+      questions.isNotEmpty ? questions[currentQuestionIndex.value] : {};
+
+  String get gamePin => pin;
+
   @override
   void onInit() {
     super.onInit();
+    final args = Get.arguments;
+    int? startIndex = args?["questionIndex"];
+    if (startIndex != null) {
+      currentQuestionIndex.value = startIndex;
+    }
     fetchQuestions();
   }
 
@@ -50,7 +61,9 @@ class QuizQuestionController extends GetxController {
         return {
           "question": data["questionText"] ?? "",
           "options": List<String>.from(data["options"] ?? []),
-          "answerIndex": data["correctIndex"] ?? 0,
+          "answerIndex": (data["correctIndex"] is int)
+              ? data["correctIndex"] as int
+              : 0,
         };
       }).toList();
 
@@ -65,7 +78,6 @@ class QuizQuestionController extends GetxController {
     }
   }
 
-  /// Load current question into UI
   void loadQuestion() {
     if (questions.isEmpty) return;
 
@@ -76,7 +88,6 @@ class QuizQuestionController extends GetxController {
     remainingTime.value = totalTime;
   }
 
-  /// Start countdown timer for each question
   void startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -84,47 +95,30 @@ class QuizQuestionController extends GetxController {
         remainingTime.value--;
       } else {
         timer.cancel();
-        if (isLastQuestion) {
-          Get.toNamed(AppRoute.scoreboardScreen);
-        } else {
-          nextQuestion();
-        }
+        goToScoreboard();
       }
     });
   }
 
-  /// When user selects an answer
   void selectOption(int index) {
     selectedOptionIndex.value = index;
   }
 
-  /// Submit the answer and move to next or end quiz
   void submitAnswer() {
     _timer?.cancel();
-    if (isLastQuestion) {
-      Get.toNamed(AppRoute.scoreboardScreen);
-    } else {
-      nextQuestion();
-    }
+    goToScoreboard();
   }
 
-  /// Move to the next question
-  void nextQuestion() {
-    if (!isLastQuestion) {
-      currentQuestionIndex.value++;
-      loadQuestion();
-      startTimer();
-    }
+  void goToScoreboard() {
+    Get.toNamed(AppRoute.scoreboardScreen);
   }
 
-  /// Get correct answer for current question
   int get correctAnswerIndex {
     return questions.isNotEmpty
         ? questions[currentQuestionIndex.value]["answerIndex"] as int
         : 0;
   }
 
-  /// Reset quiz for replay
   void reset() {
     currentQuestionIndex.value = 0;
     loadQuestion();

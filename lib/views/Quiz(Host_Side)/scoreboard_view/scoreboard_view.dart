@@ -8,12 +8,6 @@ import 'package:kahoot_app/views/Quiz(Host_Side)/scoreboard_view/scoreboard_cont
 class ScoreboardView extends GetView<ScoreboardController> {
   const ScoreboardView({super.key});
 
-  final List<String> options = const ["Lily", "Rose", "Lotus", "Sunflower"];
-  final int correctAnswerIndex = 2;
-  final String gamePin = "123456";
-  final int currentQuestion = 3;
-  final int totalQuestions = 8;
-
   @override
   Widget build(BuildContext context) {
     return AppBackground(
@@ -21,46 +15,36 @@ class ScoreboardView extends GetView<ScoreboardController> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: _buildAppBar(),
-        body: Column(
-          children: [
-            SizedBox(height: 20),
-            _buildHeader(),
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: SizedBox(
-                width: 130,
-                height: 130,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    CircularProgressIndicator(
-                      value: currentQuestion / totalQuestions,
-                      strokeWidth: 13,
-                      backgroundColor: AppColors().grey300,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        AppColors().green,
-                      ),
-                    ),
-                    Center(
-                      child: Text(
-                        "${((currentQuestion / totalQuestions) * 100).toInt()}%",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
-                          color: AppColors().black,
-                        ),
-                      ),
-                    ),
-                  ],
+        body: Obx(() {
+          final question = controller.currentQuestion;
+
+          if (question.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          return Column(
+            children: [
+              const SizedBox(height: 20),
+              _buildHeader(controller.questionText),
+              const SizedBox(height: 20),
+              _buildProgress(
+                controller.currentIndex + 1,
+                controller.totalQuestions,
+              ),
+              Expanded(
+                child: _buildOptionsGrid(
+                  controller.options,
+                  controller.correctIndex,
                 ),
               ),
-            ),
-
-            Expanded(child: _buildOptionsGrid()),
-            _buildBottomBar(),
-          ],
-        ),
+              _buildBottomBar(
+                controller.currentIndex + 1,
+                controller.totalQuestions,
+                controller.gamePin,
+              ),
+            ],
+          );
+        }),
       ),
     );
   }
@@ -86,7 +70,7 @@ class ScoreboardView extends GetView<ScoreboardController> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(String questionText) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -95,14 +79,45 @@ class ScoreboardView extends GetView<ScoreboardController> {
         borderRadius: BorderRadius.circular(5),
       ),
       child: Text(
-        "Flower __________________",
+        questionText,
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  Widget _buildOptionsGrid() {
+  Widget _buildProgress(int current, int total) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: SizedBox(
+        width: 130,
+        height: 130,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            CircularProgressIndicator(
+              value: total == 0 ? 0 : current / total,
+              strokeWidth: 13,
+              backgroundColor: AppColors().grey300,
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors().green),
+            ),
+            Center(
+              child: Text(
+                total == 0 ? "0%" : "${((current / total) * 100).toInt()}%",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                  color: AppColors().black,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptionsGrid(List<String> options, int correctIndex) {
     final optionColors = [
       AppColors().red,
       AppColors().blue,
@@ -125,30 +140,38 @@ class ScoreboardView extends GetView<ScoreboardController> {
         return Container(
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: optionColors[index],
+            color: optionColors[index % optionColors.length],
             borderRadius: BorderRadius.circular(12),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                children: [
-                  Icon(optionIcons[index], color: AppColors().white, size: 26),
-                  SizedBox(width: 8),
-                  Text(
-                    options[index],
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+              Flexible(
+                child: Row(
+                  children: [
+                    Icon(
+                      optionIcons[index % optionIcons.length],
                       color: AppColors().white,
+                      size: 26,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        options[index],
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors().white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-
-              index == correctAnswerIndex
+              index == correctIndex
                   ? Icon(Icons.check, color: AppColors().white, size: 26)
                   : Icon(Icons.close, color: AppColors().white, size: 26),
             ],
@@ -158,14 +181,14 @@ class ScoreboardView extends GetView<ScoreboardController> {
     );
   }
 
-  Widget _buildBottomBar() {
+  Widget _buildBottomBar(int current, int total, String gamePin) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors().white,
         borderRadius: BorderRadius.circular(8),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 3)),
         ],
       ),
@@ -173,7 +196,7 @@ class ScoreboardView extends GetView<ScoreboardController> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "Game PIN:$gamePin",
+            "Game PIN : $gamePin",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
@@ -181,7 +204,7 @@ class ScoreboardView extends GetView<ScoreboardController> {
             ),
           ),
           Text(
-            "Question $currentQuestion/$totalQuestions",
+            "Question $current/$total",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,

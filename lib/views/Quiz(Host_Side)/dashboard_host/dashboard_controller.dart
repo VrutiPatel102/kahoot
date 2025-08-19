@@ -4,9 +4,8 @@ import 'package:get/get.dart';
 import 'package:kahoot_app/routes/app_route.dart';
 
 class HostDashboardController extends GetxController {
-  var generatedPin = ''.obs; // reactive so UI can listen
+  var generatedPin = ''.obs;
 
-  /// Host starts a quiz
   Future<void> hostQuiz(String quizTitle, String quizId) async {
     try {
       final pin = await _generateUniquePin(6);
@@ -25,7 +24,6 @@ class HostDashboardController extends GetxController {
         'host': {'name': 'Host', 'joinedAt': FieldValue.serverTimestamp()},
       });
 
-      // 👇 Navigate to waiting lobby
       Get.offNamed(
         AppRoute.loadingHostSide,
         arguments: {
