@@ -152,26 +152,6 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
     );
   }
 
-  // Widget _buildNextButton() {
-  //   return ElevatedButton(
-  //     onPressed: controller.goToNextQuestion,
-  //     style: ElevatedButton.styleFrom(
-  //       backgroundColor: AppColors().purple,
-  //       padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-  //       elevation: 5,
-  //     ),
-  //     child: Text(
-  //       controller.isLastQuestion ? "Finish Quiz" : "Next Question",
-  //       style: TextStyle(
-  //         fontSize: 18,
-  //         color: AppColors().white,
-  //         fontWeight: FontWeight.bold,
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildBottomBar() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -185,7 +165,7 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
       ),
       child: Center(
         child: Text(
-          "Game PIN:${controller.pin}",
+          "Game PIN : ${controller.pin}",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
