@@ -51,6 +51,7 @@ class ScoreboardView extends GetView<ScoreboardController> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
+      automaticallyImplyLeading: false,
       backgroundColor: AppColors().transparent,
       actions: [
         TextButton(
