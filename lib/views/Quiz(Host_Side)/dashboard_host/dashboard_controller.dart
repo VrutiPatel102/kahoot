@@ -5,6 +5,42 @@ import 'package:kahoot_app/routes/app_route.dart';
 
 class HostDashboardController extends GetxController {
   var generatedPin = ''.obs;
+  var tempQuestions = <Map<String, dynamic>>[].obs;
+
+  void addTempQuestion(
+    String question,
+    List<String> options,
+    int correctIndex,
+  ) {
+    if (question.isNotEmpty && options.any((o) => o.isNotEmpty)) {
+      tempQuestions.add({
+        "questionText": question,
+        "options": options,
+        "correctIndex": correctIndex,
+      });
+    }
+  }
+
+  Future<void> saveQuiz(String title) async {
+    if (title.isEmpty || tempQuestions.isEmpty) {
+      Get.snackbar("Error", "Please add a title and at least one question.");
+      return;
+    }
+
+    final quizRef = FirebaseFirestore.instance.collection('quizzes').doc();
+
+    await quizRef.set({
+      "title": title,
+      "createdAt": FieldValue.serverTimestamp(),
+    });
+
+    for (var q in tempQuestions) {
+      await quizRef.collection("questions").add(q);
+    }
+
+    tempQuestions.clear();
+    Get.snackbar("Success", "Quiz saved successfully!");
+  }
 
   Future<void> hostQuiz(String quizTitle, String quizId) async {
     try {
@@ -39,7 +75,28 @@ class HostDashboardController extends GetxController {
     }
   }
 
-  /// Generate a unique pin that doesn’t collide with existing quiz pins
+  /// ✅ Delete quiz and its questions
+  Future<void> deleteQuiz(String quizId) async {
+    try {
+      final quizRef = FirebaseFirestore.instance
+          .collection('quizzes')
+          .doc(quizId);
+
+      // delete all questions inside quiz
+      final questions = await quizRef.collection("questions").get();
+      for (var doc in questions.docs) {
+        await doc.reference.delete();
+      }
+
+      // delete quiz
+      await quizRef.delete();
+
+      Get.snackbar("Deleted", "Quiz deleted successfully");
+    } catch (e) {
+      Get.snackbar("Error", "Failed to delete quiz: $e");
+    }
+  }
+
   Future<String> _generateUniquePin(int length) async {
     String pin;
     bool exists = true;
@@ -57,7 +114,6 @@ class HostDashboardController extends GetxController {
     return pin;
   }
 
-  /// Random pin generator
   String _generatePin(int length) {
     final random = Random();
     return List.generate(length, (_) => random.nextInt(10).toString()).join();
