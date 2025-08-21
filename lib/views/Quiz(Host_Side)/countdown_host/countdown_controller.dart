@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:kahoot_app/routes/app_route.dart';
 
@@ -24,6 +25,14 @@ class CountdownController extends GetxController {
         countdown.value--;
       } else {
         timer.cancel();
+
+        // 🔹 Update Firestore so participants know countdown is done
+        FirebaseFirestore.instance
+            .collection('quizzes')
+            .doc(quizId)
+            .update({"status": "question"});
+
+        // 🔹 Then navigate host to queScreen
         Get.offNamed(
           AppRoute.queScreen,
           arguments: {
