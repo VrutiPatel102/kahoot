@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kahoot_app/constants/app.dart';
 import 'package:kahoot_app/constants/app_colors.dart';
+import 'package:kahoot_app/constants/app_images.dart';
 import 'package:kahoot_app/views/Quiz(Host_Side)/dashboard_host/dashboard_controller.dart';
 
 class HostDashboardView extends GetView<HostDashboardController> {
@@ -17,7 +18,7 @@ class HostDashboardView extends GetView<HostDashboardController> {
       child: Scaffold(
         appBar: _buildAppBar(),
         body: AppBackground(
-          imagePath: 'assets/images/backgroundImage.jpg',
+          imagePath: AppImages().backgroundImage,
           child: TabBarView(
             children: [
               _buildViewQuizzesTab(),
@@ -47,11 +48,11 @@ class HostDashboardView extends GetView<HostDashboardController> {
       stream: FirebaseFirestore.instance.collection('quizzes').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator());
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("No quizzes found"));
+          return Center(child: Text("No quizzes found"));
         }
 
         var docs = snapshot.data!.docs;
@@ -81,12 +82,11 @@ class HostDashboardView extends GetView<HostDashboardController> {
                         ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     }
-
                     if (!questionSnapshot.hasData ||
                         questionSnapshot.data!.docs.isEmpty) {
                       return const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text("No questions added yet"),
+                        child: Text("No Questions added yet"),
                       );
                     }
                     return Column(
