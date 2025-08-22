@@ -78,7 +78,7 @@ class QuizQuestionController extends GetxController {
     }
   }
 
-  void loadQuestion() {
+  void loadQuestion() async {
     if (questions.isEmpty) return;
 
     final q = questions[currentQuestionIndex.value];
@@ -86,6 +86,15 @@ class QuizQuestionController extends GetxController {
     options.value = List<String>.from(q["options"] as List<dynamic>);
     selectedOptionIndex.value = -1;
     remainingTime.value = totalTime;
+
+    // 🔥 Tell participants this question is active
+    await FirebaseFirestore.instance
+        .collection('lobbies')
+        .doc(pin)
+        .update({
+      "currentQuestionIndex": currentQuestionIndex.value,
+      "isQuestionActive": true,
+    });
   }
 
   void startTimer() {
