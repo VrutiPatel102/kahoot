@@ -10,11 +10,11 @@ class ShowOptionController extends GetxController {
 
   late String quizId;
   late String userId;
+  late String nickname;
 
   final quizRef = FirebaseFirestore.instance.collection("quizzes");
 
   Future<void> select(int index) async {
-    // ✅ allow changing answer until stage changes
     hasAnswered.value = true;
     selectedIndex.value = index;
 
@@ -38,13 +38,36 @@ class ShowOptionController extends GetxController {
       Get.put(ScoreStatusController(), permanent: true);
     }
     final scoreCtrl = Get.find<ScoreStatusController>();
-    await scoreCtrl.updateScore(isCorrect);
+    final earnedPoints = await scoreCtrl.updateScore(isCorrect);
 
-    // 🔹 overwrite last choice in Firestore
+    // ✅ Save summary info in participant doc
     await quizRef.doc(quizId).collection("participants").doc(userId).set({
+      "userId": userId,
+      "nickname": nickname,
+      "score": scoreCtrl.score.value,
+      "answerStreak": scoreCtrl.answerStreak.value,
+      "lastEarnedPoints": earnedPoints,
       "selectedOption": index,
       "isCorrect": isCorrect,
+      "lastUpdated": FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
+
+    // ✅ Save per-question details in subcollection
+    await quizRef
+        .doc(quizId)
+        .collection("participants")
+        .doc(userId)
+        .collection("answers")
+        .doc("q$currentQuestionIndex")
+        .set({
+          "questionIndex": currentQuestionIndex,
+          "questionText": question["text"] ?? "",
+          "selectedOption": index,
+          "selectedOptionText": option is Map ? option["text"] ?? "" : "",
+          "isCorrect": isCorrect,
+          "earnedPoints": earnedPoints,
+          "answeredAt": FieldValue.serverTimestamp(),
+        });
   }
 
   @override
@@ -53,6 +76,7 @@ class ShowOptionController extends GetxController {
     final args = Get.arguments ?? {};
     quizId = args["quizId"] ?? "";
     userId = FirebaseAuth.instance.currentUser?.uid ?? "";
+    nickname = args["nickname"] ?? "Guest"; // ✅ pass nickname from join screen
     if (quizId.isEmpty || userId.isEmpty) {
       throw Exception(
         "❌ quizId and userId are required in ShowOptionController",
@@ -74,7 +98,6 @@ class ShowOptionController extends GetxController {
       final stage = data["quizStage"] ?? "";
 
       if (stage == "question") {
-        // reset for new question
         selectedIndex.value = -1;
         hasAnswered.value = false;
       } else if (stage == "scoreboard") {

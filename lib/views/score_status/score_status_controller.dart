@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:kahoot_app/routes/app_route.dart';
+import 'package:kahoot_app/models/participant_model.dart';
 
 class ScoreStatusController extends GetxController {
-  /// Reactive states
   var score = 0.obs;
   var answerStreak = 0.obs;
   var lastEarnedPoints = 0.obs;
@@ -16,7 +16,6 @@ class ScoreStatusController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
     final args = Get.arguments ?? {};
     quizId = args["quizId"] ?? "";
     userId = FirebaseAuth.instance.currentUser?.uid ?? "";
@@ -35,12 +34,12 @@ class ScoreStatusController extends GetxController {
     _listenStageChanges();
   }
 
-  /// ✅ Called when the participant answers a question
-  Future<void> updateScore(bool isCorrect) async {
+  /// ✅ Update score → return earned points so ShowOption can also save them
+  Future<int> updateScore(bool isCorrect) async {
     isCorrectAnswer.value = isCorrect;
 
     if (isCorrect) {
-      lastEarnedPoints.value = 50; // fixed points per correct answer
+      lastEarnedPoints.value = 50;
       score.value += lastEarnedPoints.value;
       answerStreak.value += 1;
     } else {
@@ -48,21 +47,30 @@ class ScoreStatusController extends GetxController {
       answerStreak.value = 0;
     }
 
-    // 🔹 Update Firestore for this participant
+    final participant = Participant(
+      id: userId,
+      nickname: "", // ⚠️ You can pass nickname if you already have it
+      score: score.value,
+      answerStreak: answerStreak.value,
+      lastEarnedPoints: lastEarnedPoints.value,
+      isCorrectAnswer: isCorrectAnswer.value,
+    );
+
     await FirebaseFirestore.instance
         .collection("quizzes")
         .doc(quizId)
         .collection("participants")
         .doc(userId)
-        .set({
-          "score": score.value,
-          "answerStreak": answerStreak.value,
-          "lastEarnedPoints": lastEarnedPoints.value,
-          "lastUpdated": FieldValue.serverTimestamp(),
-        }, SetOptions(merge: true));
+        .set(
+          participant.toMap()
+            ..addAll({"lastUpdated": FieldValue.serverTimestamp()}),
+          SetOptions(merge: true),
+        );
+
+    return lastEarnedPoints.value;
   }
 
-  /// 🔹 Listen to this participant's score
+  /// 🔴 Listen to my score changes in Firestore
   void _listenMyScore() {
     FirebaseFirestore.instance
         .collection("quizzes")
@@ -73,16 +81,16 @@ class ScoreStatusController extends GetxController {
         .listen((doc) {
           if (!doc.exists) return;
 
-          final data = doc.data();
-          if (data == null) return;
+          final participant = Participant.fromDoc(doc);
 
-          score.value = data["score"] ?? 0;
-          answerStreak.value = data["answerStreak"] ?? 0;
-          lastEarnedPoints.value = data["lastEarnedPoints"] ?? 0;
+          score.value = participant.score;
+          answerStreak.value = participant.answerStreak;
+          lastEarnedPoints.value = participant.lastEarnedPoints;
+          isCorrectAnswer.value = participant.isCorrectAnswer;
         });
   }
 
-  /// 🔹 Listen to quiz stage → switch instantly
+  /// 🔄 Listen to quiz stage changes → switch screens instantly
   void _listenStageChanges() {
     FirebaseFirestore.instance
         .collection("quizzes")
