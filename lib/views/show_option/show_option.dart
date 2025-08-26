@@ -16,11 +16,7 @@ class ShowOptionScreen extends GetView<ShowOptionController> {
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildRow(0, 1),
-              const SizedBox(height: 24),
-              _buildRow(2, 3),
-            ],
+            children: [_buildRow(0, 1), SizedBox(height: 24), _buildRow(2, 3)],
           ),
         ),
       ),

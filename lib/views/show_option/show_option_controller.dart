@@ -14,9 +14,8 @@ class ShowOptionController extends GetxController {
   final quizRef = FirebaseFirestore.instance.collection("quizzes");
 
   Future<void> select(int index) async {
-    if (hasAnswered.value) return;
+    // ✅ allow changing answer until stage changes
     hasAnswered.value = true;
-
     selectedIndex.value = index;
 
     final snapshot = await quizRef.doc(quizId).get();
@@ -31,14 +30,17 @@ class ShowOptionController extends GetxController {
     final options = List.from(question["options"] ?? []);
     if (options.isEmpty || index >= options.length) return;
 
-    final isCorrect = options[index]["isCorrect"] == true;
+    final option = options[index];
+    final isCorrect = option is Map && option["isCorrect"] == true;
 
+    // ensure ScoreStatusController exists
     if (!Get.isRegistered<ScoreStatusController>()) {
-      Get.put(ScoreStatusController());
+      Get.put(ScoreStatusController(), permanent: true);
     }
     final scoreCtrl = Get.find<ScoreStatusController>();
     await scoreCtrl.updateScore(isCorrect);
 
+    // 🔹 overwrite last choice in Firestore
     await quizRef.doc(quizId).collection("participants").doc(userId).set({
       "selectedOption": index,
       "isCorrect": isCorrect,
@@ -52,7 +54,9 @@ class ShowOptionController extends GetxController {
     quizId = args["quizId"] ?? "";
     userId = FirebaseAuth.instance.currentUser?.uid ?? "";
     if (quizId.isEmpty || userId.isEmpty) {
-      throw Exception("❌ quizId and userId are required in ShowOptionController");
+      throw Exception(
+        "❌ quizId and userId are required in ShowOptionController",
+      );
     }
   }
 
@@ -70,6 +74,7 @@ class ShowOptionController extends GetxController {
       final stage = data["quizStage"] ?? "";
 
       if (stage == "question") {
+        // reset for new question
         selectedIndex.value = -1;
         hasAnswered.value = false;
       } else if (stage == "scoreboard") {
