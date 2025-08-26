@@ -22,13 +22,15 @@ class ScoreStatusScreen extends GetView<ScoreStatusController> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildCorrectIcon(),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildCorrectText(),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildAnswerStreak(),
-                    SizedBox(height: 20),
-                    _buildScoreBox(),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 20),
+                    _buildEarnedPointsBox(),
+                    const SizedBox(height: 10),
+                    _buildTotalScoreBox(),
+                    const SizedBox(height: 20),
                     _buildPodiumText(),
                   ],
                 ),
@@ -40,41 +42,80 @@ class ScoreStatusScreen extends GetView<ScoreStatusController> {
     );
   }
 
+  /// Dynamic correct/wrong icon
   Widget _buildCorrectIcon() {
-    return Icon(Icons.check_circle, color: Colors.green, size: 80);
+    return Obx(() {
+      final isCorrect = controller.isCorrectAnswer.value;
+      return Icon(
+        isCorrect ? Icons.check_circle : Icons.cancel,
+        color: isCorrect ? Colors.green : Colors.red,
+        size: 80,
+      );
+    });
   }
 
+  /// Dynamic correct/wrong text
   Widget _buildCorrectText() {
-    return Text(
-      "Correct",
-      style: TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
-      ),
-    );
+    return Obx(() {
+      final isCorrect = controller.isCorrectAnswer.value;
+      return Text(
+        isCorrect ? "Correct" : "Wrong",
+        style: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+          color: isCorrect ? Colors.green : Colors.red,
+        ),
+      );
+    });
   }
 
   Widget _buildAnswerStreak() {
     return Obx(
-      () => Text(
+          () => Text(
         "Answer Streak ${controller.answerStreak.value}",
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       ),
     );
   }
 
-  Widget _buildScoreBox() {
+  /// Points earned this round
+  Widget _buildEarnedPointsBox() {
+    return Obx(() {
+      final isCorrect = controller.isCorrectAnswer.value;
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        decoration: BoxDecoration(
+          color: isCorrect
+              ? Colors.green.withOpacity(0.8)
+              : Colors.red.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          isCorrect
+              ? "+${controller.lastEarnedPoints.value}"
+              : "0",
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    });
+  }
+
+  /// Running total score
+  Widget _buildTotalScoreBox() {
     return Obx(
-      () => Container(
+          () => Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.black.withOpacity(0.8),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
-          "+ ${controller.score.value}",
-          style: TextStyle(
+          "Total: ${controller.score.value}",
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -85,7 +126,7 @@ class ScoreStatusScreen extends GetView<ScoreStatusController> {
   }
 
   Widget _buildPodiumText() {
-    return Text(
+    return const Text(
       "You're on the podium!",
       style: TextStyle(fontSize: 16, color: Colors.black),
     );
