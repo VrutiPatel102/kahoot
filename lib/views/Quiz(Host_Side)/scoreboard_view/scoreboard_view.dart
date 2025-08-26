@@ -19,14 +19,14 @@ class ScoreboardView extends GetView<ScoreboardController> {
           final question = controller.currentQuestion;
 
           if (question.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           }
 
           return Column(
             children: [
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               _buildHeader(controller.questionText),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               _buildProgress(
                 controller.currentIndex + 1,
                 controller.totalQuestions,
@@ -82,7 +82,7 @@ class ScoreboardView extends GetView<ScoreboardController> {
       child: Text(
         questionText,
         textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -156,7 +156,7 @@ class ScoreboardView extends GetView<ScoreboardController> {
                       color: AppColors().white,
                       size: 26,
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Flexible(
                       child: Text(
                         options[index],
@@ -189,7 +189,7 @@ class ScoreboardView extends GetView<ScoreboardController> {
       decoration: BoxDecoration(
         color: AppColors().white,
         borderRadius: BorderRadius.circular(8),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 3)),
         ],
       ),

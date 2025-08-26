@@ -1,125 +1,103 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:get/get.dart';
-// import 'package:kahoot_app/routes/app_route.dart';
-//
-// class ScoreStatusController extends GetxController {
-//   var score = 0.obs;
-//   var answerStreak = 0.obs;
-//   late String quizId;
-//
-//   final quizRef = FirebaseFirestore.instance.collection("quizzes");
-//
-//   void setResult(int newScore, int streak) {
-//     score.value = newScore;
-//     answerStreak.value = streak;
-//   }
-//
-//   @override
-//   void onInit() {
-//     super.onInit();
-//     final args = Get.arguments;
-//     quizId = args["quizId"];
-//   }
-//
-//   @override
-//   void onReady() {
-//     super.onReady();
-//     _listenStageChanges();
-//   }
-//
-//   void _listenStageChanges() {
-//     quizRef.doc(quizId).snapshots().listen((snapshot) {
-//       if (!snapshot.exists) return;
-//
-//       final stage = snapshot["quizStage"];
-//       if (stage == "question") {
-//         // Host moved to next question → user goes directly to ShowOptionScreen
-//         Get.offNamed(
-//           AppRoute.showOption,
-//           arguments: {"quizId": quizId},
-//           preventDuplicates: false,
-//         );
-//       } else if (stage == "final") {
-//         // Host ended quiz → user rank screen
-//         Get.offNamed(
-//           AppRoute.userRank,
-//           arguments: {"quizId": quizId},
-//           preventDuplicates: false,
-//         );
-//       }
-//     });
-//   }
-// }
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:kahoot_app/routes/app_route.dart';
 
 class ScoreStatusController extends GetxController {
   var score = 0.obs;
   var answerStreak = 0.obs;
-  var status = "pending".obs; // ✅ correct, wrong, timeout
-  late String quizId;
-  late String userId;
+  var lastEarnedPoints = 0.obs;
+  var isCorrectAnswer = false.obs;
+
+  late final String quizId;
+  late final String userId;
 
   final quizRef = FirebaseFirestore.instance.collection("quizzes");
 
   @override
   void onInit() {
     super.onInit();
-    final args = Get.arguments;
-    quizId = args["quizId"];
-    userId = args["userId"];
+
+    // ✅ Always expect quizId in arguments
+    final args = Get.arguments ?? {};
+    quizId = args["quizId"] ?? "";
+
+    // ✅ Always take userId from FirebaseAuth
+    userId = FirebaseAuth.instance.currentUser?.uid ?? "";
+
+    if (quizId.isEmpty || userId.isEmpty) {
+      throw Exception("❌ quizId and userId are required for ScoreStatusController");
+    }
   }
 
   @override
   void onReady() {
     super.onReady();
-    _listenToParticipant();
+    _listenMyScore();
     _listenStageChanges();
   }
 
-  /// ✅ Listen to this user's result in participants collection
-  void _listenToParticipant() {
+  /// ✅ Called when the participant answers a question
+  Future<void> updateScore(bool isCorrect) async {
+    isCorrectAnswer.value = isCorrect;
+
+    if (isCorrect) {
+      lastEarnedPoints.value = 50; // you can make this dynamic
+      score.value += 50;
+      answerStreak.value += 1;
+    } else {
+      lastEarnedPoints.value = 0;
+      answerStreak.value = 0;
+    }
+
+    print("⬆️ Updating Firestore for $userId : "
+        "score=${score.value}, streak=${answerStreak.value}, "
+        "earned=${lastEarnedPoints.value}");
+
+    // ✅ Save participant progress in Firestore
+    await quizRef
+        .doc(quizId)
+        .collection("participants")
+        .doc(userId)
+        .set({
+      "score": score.value,
+      "answerStreak": answerStreak.value,
+      "lastUpdated": FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
+  /// 🔹 Live listen to *this participant's* score from Firestore
+  void _listenMyScore() {
     quizRef
         .doc(quizId)
         .collection("participants")
         .doc(userId)
         .snapshots()
-        .listen((snapshot) {
-          if (!snapshot.exists) return;
+        .listen((doc) {
+      if (!doc.exists) return;
 
-          final data = snapshot.data() ?? {};
-          score.value = data["score"] ?? 0;
-          status.value = data["status"] ?? "";
-
-          // ✅ handle streak (consecutive correct answers)
-          if (status.value == "correct") {
-            answerStreak.value = (answerStreak.value + 1);
-          } else if (status.value == "wrong" || status.value == "timeout") {
-            answerStreak.value = 0;
-          }
-        });
+      score.value = doc.data()?["score"] ?? 0;
+      answerStreak.value = doc.data()?["answerStreak"] ?? 0;
+    });
   }
 
-  /// ✅ Listen to quiz stage changes from host
+  /// 🔹 Listen to host stage changes → navigate participant
   void _listenStageChanges() {
     quizRef.doc(quizId).snapshots().listen((snapshot) {
       if (!snapshot.exists) return;
 
-      final stage = snapshot["quizStage"];
+      final stage = snapshot.data()?["quizStage"];
+
       if (stage == "question") {
-        // Host moved to next question → user goes directly to ShowOptionScreen
         Get.offNamed(
           AppRoute.showOption,
-          arguments: {"quizId": quizId, "userId": userId},
+          arguments: {"quizId": quizId},
           preventDuplicates: false,
         );
       } else if (stage == "final") {
-        // Host ended quiz → user rank screen
         Get.offNamed(
           AppRoute.userRank,
-          arguments: {"quizId": quizId, "userId": userId},
+          arguments: {"quizId": quizId},
           preventDuplicates: false,
         );
       }
