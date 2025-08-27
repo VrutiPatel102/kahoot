@@ -12,6 +12,7 @@ class ScoreStatusController extends GetxController {
 
   late final String quizId;
   late final String userId;
+  late final String nickname;
 
   @override
   void onInit() {
@@ -19,6 +20,7 @@ class ScoreStatusController extends GetxController {
     final args = Get.arguments ?? {};
     quizId = args["quizId"] ?? "";
     userId = FirebaseAuth.instance.currentUser?.uid ?? "";
+    nickname = args["nickname"] ?? "Guest";
 
     if (quizId.isEmpty || userId.isEmpty) {
       throw Exception(
@@ -34,7 +36,7 @@ class ScoreStatusController extends GetxController {
     _listenStageChanges();
   }
 
-  /// ✅ Update score → return earned points so ShowOption can also save them
+  /// ✅ Update score after answering
   Future<int> updateScore(bool isCorrect) async {
     isCorrectAnswer.value = isCorrect;
 
@@ -47,9 +49,10 @@ class ScoreStatusController extends GetxController {
       answerStreak.value = 0;
     }
 
+    // Save participant score in Firestore
     final participant = Participant(
       id: userId,
-      nickname: "", // ⚠️ You can pass nickname if you already have it
+      nickname: nickname,
       score: score.value,
       answerStreak: answerStreak.value,
       lastEarnedPoints: lastEarnedPoints.value,
@@ -70,7 +73,7 @@ class ScoreStatusController extends GetxController {
     return lastEarnedPoints.value;
   }
 
-  /// 🔴 Listen to my score changes in Firestore
+  /// 🔁 Real-time listener for participant score (from Firestore)
   void _listenMyScore() {
     FirebaseFirestore.instance
         .collection("quizzes")
@@ -90,7 +93,7 @@ class ScoreStatusController extends GetxController {
         });
   }
 
-  /// 🔄 Listen to quiz stage changes → switch screens instantly
+  /// 🚦 Listen to quiz stage changes and redirect
   void _listenStageChanges() {
     FirebaseFirestore.instance
         .collection("quizzes")
@@ -105,13 +108,13 @@ class ScoreStatusController extends GetxController {
           if (stage == "question") {
             Get.offNamed(
               AppRoute.showOption,
-              arguments: {"quizId": quizId},
+              arguments: {"quizId": quizId, "nickname": nickname},
               preventDuplicates: false,
             );
           } else if (stage == "final") {
             Get.offNamed(
               AppRoute.userRank,
-              arguments: {"quizId": quizId},
+              arguments: {"quizId": quizId, "nickname": nickname},
               preventDuplicates: false,
             );
           }

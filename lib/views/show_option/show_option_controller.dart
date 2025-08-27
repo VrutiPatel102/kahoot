@@ -15,32 +15,80 @@ class ShowOptionController extends GetxController {
   final quizRef = FirebaseFirestore.instance.collection("quizzes");
 
   Future<void> select(int index) async {
+    print("👉 select() called with index: $index");
+
     hasAnswered.value = true;
     selectedIndex.value = index;
 
     final snapshot = await quizRef.doc(quizId).get();
-    if (!snapshot.exists) return;
+    if (!snapshot.exists) {
+      print("❌ Quiz not found: $quizId");
+      return;
+    }
 
     final data = snapshot.data() ?? {};
     final currentQuestionIndex = data["currentQuestionIndex"] ?? 0;
-    final questions = List.from(data["questions"] ?? []);
-    if (questions.isEmpty || currentQuestionIndex >= questions.length) return;
+    print("📌 Current question index: $currentQuestionIndex");
 
-    final question = questions[currentQuestionIndex];
-    final options = List.from(question["options"] ?? []);
-    if (options.isEmpty || index >= options.length) return;
+    // Try to fetch the current question from the 'questions' subcollection
+    DocumentSnapshot<Map<String, dynamic>>? questionSnap;
+    try {
+      questionSnap = await quizRef
+          .doc(quizId)
+          .collection("questions")
+          .doc("q$currentQuestionIndex")
+          .get();
+    } catch (e) {
+      print("⚠️ Could not fetch question from subcollection: $e");
+    }
 
-    final option = options[index];
-    final isCorrect = option is Map && option["isCorrect"] == true;
+    Map<String, dynamic>? question;
+    if (questionSnap != null && questionSnap.exists) {
+      question = questionSnap.data();
+    } else {
+      // fallback to questions array in quiz doc
+      final questions = List.from(data["questions"] ?? []);
+      if (questions.isEmpty || currentQuestionIndex >= questions.length) {
+        print("❌ No questions found or index out of range");
+        return;
+      }
+      question = questions[currentQuestionIndex];
+    }
 
-    // ensure ScoreStatusController exists
+    final options = List.from(question?["options"] ?? []);
+    if (options.isEmpty || index >= options.length) {
+      print("❌ Invalid option selected");
+      return;
+    }
+
+    // Determine if answer is correct and get selectedOptionText
+    int correctIndex = question?["correctIndex"] ?? -1;
+    bool isCorrect = false;
+    String selectedOptionText = "";
+
+    if (options[index] is Map) {
+      final option = options[index];
+      selectedOptionText = option["text"] ?? "";
+      if (option.containsKey("isCorrect")) {
+        isCorrect = option["isCorrect"] == true;
+      } else {
+        isCorrect = index == correctIndex;
+      }
+    } else if (options[index] is String) {
+      selectedOptionText = options[index];
+      isCorrect = index == correctIndex;
+    }
+
+    // Update score via ScoreStatusController
     if (!Get.isRegistered<ScoreStatusController>()) {
       Get.put(ScoreStatusController(), permanent: true);
     }
     final scoreCtrl = Get.find<ScoreStatusController>();
     final earnedPoints = await scoreCtrl.updateScore(isCorrect);
 
-    // ✅ Save summary info in participant doc
+    print("🏆 Earned: $earnedPoints | Total Score: ${scoreCtrl.score.value}");
+
+    // Save participant summary document (merging updates)
     await quizRef.doc(quizId).collection("participants").doc(userId).set({
       "userId": userId,
       "nickname": nickname,
@@ -52,7 +100,7 @@ class ShowOptionController extends GetxController {
       "lastUpdated": FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
 
-    // ✅ Save per-question details in subcollection
+    // Save individual answer in answers subcollection
     await quizRef
         .doc(quizId)
         .collection("participants")
@@ -61,13 +109,15 @@ class ShowOptionController extends GetxController {
         .doc("q$currentQuestionIndex")
         .set({
           "questionIndex": currentQuestionIndex,
-          "questionText": question["text"] ?? "",
+          "questionText": question?["questionText"] ?? question?["text"] ?? "",
           "selectedOption": index,
-          "selectedOptionText": option is Map ? option["text"] ?? "" : "",
+          "selectedOptionText": selectedOptionText,
           "isCorrect": isCorrect,
           "earnedPoints": earnedPoints,
           "answeredAt": FieldValue.serverTimestamp(),
         });
+
+    print("✅ Answer saved for question $currentQuestionIndex");
   }
 
   @override
@@ -76,7 +126,7 @@ class ShowOptionController extends GetxController {
     final args = Get.arguments ?? {};
     quizId = args["quizId"] ?? "";
     userId = FirebaseAuth.instance.currentUser?.uid ?? "";
-    nickname = args["nickname"] ?? "Guest"; // ✅ pass nickname from join screen
+    nickname = args["nickname"] ?? "Guest"; // pass nickname from join screen
     if (quizId.isEmpty || userId.isEmpty) {
       throw Exception(
         "❌ quizId and userId are required in ShowOptionController",
@@ -101,17 +151,23 @@ class ShowOptionController extends GetxController {
         selectedIndex.value = -1;
         hasAnswered.value = false;
       } else if (stage == "scoreboard") {
-        Get.offNamed(
-          AppRoute.scoreStatus,
-          arguments: {"quizId": quizId},
-          preventDuplicates: false,
-        );
+        if (hasAnswered.value) {
+          // navigate only if answered
+          Get.offNamed(
+            AppRoute.scoreStatus,
+            arguments: {"quizId": quizId},
+            preventDuplicates: false,
+          );
+        }
       } else if (stage == "final") {
-        Get.offNamed(
-          AppRoute.userRank,
-          arguments: {"quizId": quizId},
-          preventDuplicates: false,
-        );
+        if (hasAnswered.value) {
+          // navigate only if answered
+          Get.offNamed(
+            AppRoute.userRank,
+            arguments: {"quizId": quizId},
+            preventDuplicates: false,
+          );
+        }
       }
     });
   }

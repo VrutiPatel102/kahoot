@@ -17,26 +17,25 @@ class Participant {
     required this.isCorrectAnswer,
   });
 
-  Map<String, dynamic> toMap() {
-    return {
-      "id": id,
-      "nickname": nickname,
-      "score": score,
-      "answerStreak": answerStreak,
-      "lastEarnedPoints": lastEarnedPoints,
-      "isCorrectAnswer": isCorrectAnswer,
-    };
-  }
-
   factory Participant.fromDoc(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+    final data = doc.data() as Map<String, dynamic>? ?? {};
     return Participant(
-      id: data["id"] ?? "",
+      id: doc.id,
       nickname: data["nickname"] ?? "",
       score: data["score"] ?? 0,
       answerStreak: data["answerStreak"] ?? 0,
       lastEarnedPoints: data["lastEarnedPoints"] ?? 0,
-      isCorrectAnswer: data["isCorrectAnswer"] ?? false,
+      isCorrectAnswer: data["isCorrect"] ?? true,
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      "nickname": nickname,
+      "score": score,
+      "answerStreak": answerStreak,
+      "lastEarnedPoints": lastEarnedPoints,
+      "isCorrect": isCorrectAnswer,
+    };
   }
 }

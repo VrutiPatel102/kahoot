@@ -33,7 +33,7 @@ class ShowOptionScreen extends GetView<ShowOptionController> {
 
     final icons = [
       Icons.change_history,
-      Icons.hexagon_outlined,
+      Icons.diamond_outlined,
       Icons.circle_outlined,
       Icons.crop_square,
     ];

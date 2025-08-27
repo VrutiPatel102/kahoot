@@ -25,7 +25,7 @@ class ScoreboardView extends GetView<ScoreboardController> {
           return Column(
             children: [
               SizedBox(height: 20),
-              _buildHeader(controller.questionText),
+              // _buildHeader(controller.questionText),
               SizedBox(height: 20),
               _buildProgress(
                 controller.currentIndex + 1,
@@ -71,21 +71,21 @@ class ScoreboardView extends GetView<ScoreboardController> {
     );
   }
 
-  Widget _buildHeader(String questionText) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: AppColors().white,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Text(
-        questionText,
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
+  // Widget _buildHeader(String questionText) {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  //     margin: const EdgeInsets.symmetric(horizontal: 20),
+  //     decoration: BoxDecoration(
+  //       color: AppColors().white,
+  //       borderRadius: BorderRadius.circular(5),
+  //     ),
+  //     child: Text(
+  //       questionText,
+  //       textAlign: TextAlign.center,
+  //       style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+  //     ),
+  //   );
+  // }
 
   Widget _buildProgress(int current, int total) {
     return Padding(
