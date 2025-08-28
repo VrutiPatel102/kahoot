@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kahoot_app/constants/app_colors.dart';
 import 'package:kahoot_app/constants/app_images.dart';
 import 'package:kahoot_app/constants/app.dart';
@@ -10,20 +11,54 @@ class ShowOptionScreen extends GetView<ShowOptionController> {
 
   @override
   Widget build(BuildContext context) {
+    final quizId = controller.quizId;
+    final questionId = Get.arguments?["questionId"] ?? "";
+
+    // Prevent null navigation
+    if (quizId.isEmpty || questionId.isEmpty) {
+      return const Scaffold(
+        body: Center(child: Text("❌ Quiz ID or Question ID missing")),
+      );
+    }
+
     return Scaffold(
       body: AppBackground(
         imagePath: AppImages().backgroundImage,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [_buildRow(0, 1), SizedBox(height: 24), _buildRow(2, 3)],
-          ),
+        child: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection("quizzes")
+              .doc(quizId)
+              .collection("questions")
+              .doc(questionId)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (!snapshot.hasData || !snapshot.data!.exists) {
+              return const Center(child: Text("❌ Question not found"));
+            }
+
+            final data = snapshot.data!.data() as Map<String, dynamic>? ?? {};
+            final options = List<String>.from(data["options"] ?? []);
+
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildRow(options, 0, 1),
+                  const SizedBox(height: 24),
+                  _buildRow(options, 2, 3),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildRow(int i1, int i2) {
+  Widget _buildRow(List<String> options, int i1, int i2) {
     final colors = [
       AppColors().red,
       AppColors().blue,
@@ -41,18 +76,31 @@ class ShowOptionScreen extends GetView<ShowOptionController> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildOption(i1, icons[i1], colors[i1]),
-        _buildOption(i2, icons[i2], colors[i2]),
+        _buildOption(options, i1, icons[i1], colors[i1]),
+        _buildOption(options, i2, icons[i2], colors[i2]),
       ],
     );
   }
 
-  Widget _buildOption(int index, IconData icon, Color color) {
+  Widget _buildOption(
+    List<String> options,
+    int index,
+    IconData icon,
+    Color color,
+  ) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: GestureDetector(
-          onTap: () => controller.select(index),
+          onTap: () {
+            if (options.length > index) {
+              controller.select(
+                index,
+                options.length > 0 ? index : 0,
+                Get.arguments?["questionId"] ?? "",
+              );
+            }
+          },
           child: Obx(() {
             final isSelected = controller.selectedIndex.value == index;
             return Container(
@@ -66,7 +114,19 @@ class ShowOptionScreen extends GetView<ShowOptionController> {
                   width: 2,
                 ),
               ),
-              child: Icon(icon, color: AppColors().white, size: 48),
+              child: Center(
+                child: Text(
+                  index < options.length
+                      ? options[index]
+                      : "", // Show option text
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             );
           }),
         ),
