@@ -4,6 +4,9 @@ class AppColors {
   Color white = Colors.white;
   Color green = Colors.green;
   Color black = Colors.black;
+
+  Color black54 = Colors.black54;
+
   Color grey300 = Colors.grey.shade300;
   Color red700 = Colors.red.shade700;
   Color purple = Color(0xFF673AB7);

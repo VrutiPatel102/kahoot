@@ -13,7 +13,6 @@ class FinalRankView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     return Scaffold(
       body: AppBackground(
         imagePath: AppImages().backgroundImage,
@@ -31,7 +30,7 @@ class FinalRankView extends StatelessWidget {
                     Shadow(
                       offset: Offset(1, 1),
                       blurRadius: 4,
-                      color: Colors.black54,
+                      color: AppColors().black54,
                     ),
                   ],
                 ),
