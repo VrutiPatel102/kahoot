@@ -36,7 +36,6 @@ class FinalRankView extends StatelessWidget {
                   ],
                 ),
               ),
-
               SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -62,7 +61,6 @@ class FinalRankView extends StatelessWidget {
               Spacer(),
               Obx(() {
                 final players = controller.players;
-
                 return SizedBox(
                   height: size.height * 0.4,
                   child: Row(
