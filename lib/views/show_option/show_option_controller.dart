@@ -405,13 +405,54 @@ class ShowOptionController extends GetxController {
         });
   }
 
+  // Future<void> select(int selected, int correctIndex, String questionId) async {
+  //   if (hasAnswered.value) return;
+  //   hasAnswered.value = true;
+  //   selectedIndex.value = selected;
+  //
+  //   final isCorrect = selected == correctIndex;
+  //   final points = isCorrect ? 50 : 0;
+  //
+  //   if (isCorrect) {
+  //     correctAnswers.value++;
+  //     streak.value++;
+  //   } else {
+  //     wrongAnswers.value++;
+  //     streak.value = 0;
+  //   }
+  //   score.value += points;
+  //
+  //   final participantRef = FirebaseFirestore.instance
+  //       .collection("quizzes")
+  //       .doc(quizId)
+  //       .collection("participants")
+  //       .doc(userId);
+  //
+  //   await participantRef.collection("answers").doc(questionId).set({
+  //     "selectedOption": selected,
+  //     "isCorrect": isCorrect,
+  //     "earnedPoints": points,
+  //     "answeredAt": FieldValue.serverTimestamp(),
+  //   });
+  //
+  //   await participantRef.set({
+  //     "nickname": nickname,
+  //     "score": score.value,
+  //     "correctAnswers": correctAnswers.value,
+  //     "wrongAnswers": wrongAnswers.value,
+  //     "answerStreak": streak.value,
+  //     "lastEarnedPoints": points,
+  //     "lastUpdated": FieldValue.serverTimestamp(),
+  //   }, SetOptions(merge: true));
+  // }
+
   Future<void> select(int selected, int correctIndex, String questionId) async {
     if (hasAnswered.value) return;
     hasAnswered.value = true;
     selectedIndex.value = selected;
 
     final isCorrect = selected == correctIndex;
-    final points = isCorrect ? 50 : 0;
+    final points = isCorrect ? 50 : 0; // adjust scoring system
 
     if (isCorrect) {
       correctAnswers.value++;
@@ -420,8 +461,8 @@ class ShowOptionController extends GetxController {
       wrongAnswers.value++;
       streak.value = 0;
     }
-    score.value += points;
 
+    // store per-question answer
     final participantRef = FirebaseFirestore.instance
         .collection("quizzes")
         .doc(quizId)
@@ -435,13 +476,15 @@ class ShowOptionController extends GetxController {
       "answeredAt": FieldValue.serverTimestamp(),
     });
 
+    // ✅ increment total score instead of overwriting
     await participantRef.set({
       "nickname": nickname,
-      "score": score.value,
-      "correctAnswers": correctAnswers.value,
-      "wrongAnswers": wrongAnswers.value,
+      "score": FieldValue.increment(points), // cumulative score
+      "correctAnswers": FieldValue.increment(isCorrect ? 1 : 0),
+      "wrongAnswers": FieldValue.increment(isCorrect ? 0 : 1),
       "answerStreak": streak.value,
       "lastEarnedPoints": points,
+      "lastAnswerCorrect": isCorrect,
       "lastUpdated": FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
