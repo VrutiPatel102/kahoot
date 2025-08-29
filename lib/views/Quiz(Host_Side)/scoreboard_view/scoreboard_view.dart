@@ -25,7 +25,6 @@ class ScoreboardView extends GetView<ScoreboardController> {
           return Column(
             children: [
               SizedBox(height: 20),
-              // _buildHeader(controller.questionText),
               SizedBox(height: 20),
               _buildProgress(
                 controller.currentIndex + 1,
@@ -49,7 +48,7 @@ class ScoreboardView extends GetView<ScoreboardController> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar() {
+  AppBar _buildAppBar() {
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: AppColors().transparent,
@@ -70,22 +69,6 @@ class ScoreboardView extends GetView<ScoreboardController> {
       ],
     );
   }
-
-  // Widget _buildHeader(String questionText) {
-  //   return Container(
-  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-  //     margin: const EdgeInsets.symmetric(horizontal: 20),
-  //     decoration: BoxDecoration(
-  //       color: AppColors().white,
-  //       borderRadius: BorderRadius.circular(5),
-  //     ),
-  //     child: Text(
-  //       questionText,
-  //       textAlign: TextAlign.center,
-  //       style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-  //     ),
-  //   );
-  // }
 
   Widget _buildProgress(int current, int total) {
     return Padding(
@@ -139,7 +122,7 @@ class ScoreboardView extends GetView<ScoreboardController> {
       padding: const EdgeInsets.all(8),
       children: List.generate(options.length, (index) {
         return Container(
-          margin: const EdgeInsets.all(8),
+          margin: EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: optionColors[index % optionColors.length],
             borderRadius: BorderRadius.circular(12),
@@ -185,7 +168,7 @@ class ScoreboardView extends GetView<ScoreboardController> {
   Widget _buildBottomBar(int current, int total, String gamePin) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors().white,
         borderRadius: BorderRadius.circular(8),

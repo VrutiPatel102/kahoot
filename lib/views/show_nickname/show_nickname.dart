@@ -37,7 +37,7 @@ class ShowNicknameScreen extends GetView<ShowNickNameController> {
         initial,
         style: TextStyle(
           fontSize: 40,
-          color: Colors.white,
+          color: AppColors().white,
           fontWeight: FontWeight.bold,
         ),
       ),

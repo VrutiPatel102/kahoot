@@ -44,7 +44,7 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
 
   Widget buildBody() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -80,7 +80,7 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
   Widget _buildQuestionText() {
     return Obx(
       () => Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.85),
           borderRadius: BorderRadius.circular(15),
@@ -118,7 +118,7 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
           return GestureDetector(
             onTap: () => controller.selectOption(index),
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+              padding: EdgeInsets.symmetric(vertical: 18, horizontal: 12),
               decoration: BoxDecoration(
                 color: optionColors[index].withOpacity(isSelected ? 0.8 : 1.0),
                 borderRadius: BorderRadius.circular(12),
@@ -154,8 +154,8 @@ class QuizQuestionView extends GetView<QuizQuestionController> {
 
   Widget _buildBottomBar() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      margin: const EdgeInsets.symmetric(horizontal: 1, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: EdgeInsets.symmetric(horizontal: 1, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors().white,
         borderRadius: BorderRadius.circular(8),

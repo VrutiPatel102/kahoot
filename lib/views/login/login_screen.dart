@@ -145,7 +145,7 @@ class LoginScreen extends GetView<LoginController> {
             TextSpan(text: "Don't have an account? "),
             TextSpan(
               text: "Register",
-              style: const TextStyle(
+              style: TextStyle(
                 decoration: TextDecoration.underline,
                 fontWeight: FontWeight.bold,
               ),

@@ -29,12 +29,10 @@ class QuizLobbyController extends GetxController {
       return;
     }
 
-    // If host, clear old participants for a fresh session
     if (isHost) {
       _clearOldParticipants();
     }
 
-    // If participant, add with pin check
     if (!isHost && playerName.isNotEmpty) {
       _addPlayerWithPin(playerName, enteredPin.value);
     }
@@ -43,7 +41,6 @@ class QuizLobbyController extends GetxController {
     _listenToQuizStart();
   }
 
-  /// Host clears all old participants for a fresh session
   Future<void> _clearOldParticipants() async {
     final participantsRef = FirebaseFirestore.instance
         .collection('quizzes')
@@ -56,7 +53,6 @@ class QuizLobbyController extends GetxController {
     }
   }
 
-  /// Add player only if the entered pin matches the quiz pin
   Future<void> _addPlayerWithPin(String name, String pin) async {
     if (pin != pinCode.value) {
       Get.snackbar("Error", "Incorrect pin! Please try again.");
@@ -81,7 +77,6 @@ class QuizLobbyController extends GetxController {
     }
   }
 
-  /// Listen for participant changes in real-time
   void _listenToParticipants() {
     FirebaseFirestore.instance
         .collection('quizzes')
@@ -99,7 +94,6 @@ class QuizLobbyController extends GetxController {
         });
   }
 
-  /// Host starts the quiz
   Future<void> startQuiz() async {
     if (!isHost) return;
 
@@ -114,7 +108,6 @@ class QuizLobbyController extends GetxController {
     });
   }
 
-  /// Listen for quiz status changes and navigate participants
   void _listenToQuizStart() {
     FirebaseFirestore.instance
         .collection('quizzes')
@@ -135,7 +128,6 @@ class QuizLobbyController extends GetxController {
         });
   }
 
-  /// Cleanup player on leaving
   @override
   void onClose() async {
     if (!isHost && playerName.isNotEmpty) {

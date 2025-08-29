@@ -23,7 +23,7 @@ class LoadingPinScreen extends GetView<LoadingPinController> {
               color: AppColors().white,
               size: 70,
             ),
-            const SizedBox(height: 30),
+            SizedBox(height: 30),
             Text(
               "Generating PIN for \"$quizTitle\"",
               style: TextStyle(
@@ -33,10 +33,10 @@ class LoadingPinScreen extends GetView<LoadingPinController> {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             Obx(
               () => controller.pin.value.isEmpty
-                  ? const SizedBox.shrink()
+                  ? SizedBox.shrink()
                   : Text(
                       "PIN: ${controller.pin.value}",
                       style: TextStyle(

@@ -338,8 +338,164 @@
 //     );
 //   }
 // }
+// import 'dart:async';
+//
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:get/get.dart';
+// import 'package:kahoot_app/routes/app_route.dart';
+//
+// class ShowOptionController extends GetxController {
+//   var selectedIndex = (-1).obs;
+//   var hasAnswered = false.obs;
+//
+//   late String quizId;
+//   late String userId;
+//   late String nickname;
+//   StreamSubscription? _stageSubscription;
+//
+//   var score = 0.obs;
+//   var streak = 0.obs;
+//   var correctAnswers = 0.obs;
+//   var wrongAnswers = 0.obs;
+//
+//   @override
+//   void onInit() {
+//     super.onInit();
+//     final args = Get.arguments ?? {};
+//     quizId = args["quizId"] ?? "";
+//     userId = args["userId"] ?? "";
+//     nickname = args["nickname"] ?? "Guest";
+//
+//     _listenStageChanges();
+//   }
+//
+//   /// Listen host stage, move to ScoreStatus when stage changes
+//   void _listenStageChanges() {
+//     _stageSubscription = FirebaseFirestore.instance
+//         .collection("quizzes")
+//         .doc(quizId)
+//         .snapshots()
+//         .listen((doc) {
+//           if (!doc.exists) return;
+//           final stage = doc.data()?["quizStage"] ?? "";
+//           final currentQuestionIndex = doc.data()?["currentQuestionIndex"] ?? 0;
+//
+//           if (stage == "scoreboard") {
+//             // Navigate to ScoreStatus
+//             Get.offNamed(
+//               AppRoute.scoreStatus,
+//               arguments: {
+//                 "quizId": quizId,
+//                 "userId": userId,
+//                 "nickname": nickname,
+//                 "questionIndex": currentQuestionIndex,
+//               },
+//             );
+//           } else if (stage == "final") {
+//             // Quiz finished
+//             Get.offNamed(
+//               AppRoute.userRank,
+//               arguments: {
+//                 "quizId": quizId,
+//                 "userId": userId,
+//                 "nickname": nickname,
+//               },
+//             );
+//           }
+//         });
+//   }
+//
+//   // Future<void> select(int selected, int correctIndex, String questionId) async {
+//   //   if (hasAnswered.value) return;
+//   //   hasAnswered.value = true;
+//   //   selectedIndex.value = selected;
+//   //
+//   //   final isCorrect = selected == correctIndex;
+//   //   final points = isCorrect ? 50 : 0;
+//   //
+//   //   if (isCorrect) {
+//   //     correctAnswers.value++;
+//   //     streak.value++;
+//   //   } else {
+//   //     wrongAnswers.value++;
+//   //     streak.value = 0;
+//   //   }
+//   //   score.value += points;
+//   //
+//   //   final participantRef = FirebaseFirestore.instance
+//   //       .collection("quizzes")
+//   //       .doc(quizId)
+//   //       .collection("participants")
+//   //       .doc(userId);
+//   //
+//   //   await participantRef.collection("answers").doc(questionId).set({
+//   //     "selectedOption": selected,
+//   //     "isCorrect": isCorrect,
+//   //     "earnedPoints": points,
+//   //     "answeredAt": FieldValue.serverTimestamp(),
+//   //   });
+//   //
+//   //   await participantRef.set({
+//   //     "nickname": nickname,
+//   //     "score": score.value,
+//   //     "correctAnswers": correctAnswers.value,
+//   //     "wrongAnswers": wrongAnswers.value,
+//   //     "answerStreak": streak.value,
+//   //     "lastEarnedPoints": points,
+//   //     "lastUpdated": FieldValue.serverTimestamp(),
+//   //   }, SetOptions(merge: true));
+//   // }
+//
+//   Future<void> select(int selected, int correctIndex, String questionId) async {
+//     if (hasAnswered.value) return;
+//     hasAnswered.value = true;
+//     selectedIndex.value = selected;
+//
+//     final isCorrect = selected == correctIndex;
+//     final points = isCorrect ? 50 : 0; // adjust scoring system
+//
+//     if (isCorrect) {
+//       correctAnswers.value++;
+//       streak.value++;
+//     } else {
+//       wrongAnswers.value++;
+//       streak.value = 0;
+//     }
+//
+//     // store per-question answer
+//     final participantRef = FirebaseFirestore.instance
+//         .collection("quizzes")
+//         .doc(quizId)
+//         .collection("participants")
+//         .doc(userId);
+//
+//     await participantRef.collection("answers").doc(questionId).set({
+//       "selectedOption": selected,
+//       "isCorrect": isCorrect,
+//       "earnedPoints": points,
+//       "answeredAt": FieldValue.serverTimestamp(),
+//     });
+//
+//     // ✅ increment total score instead of overwriting
+//     await participantRef.set({
+//       "nickname": nickname,
+//       "score": FieldValue.increment(points), // cumulative score
+//       "correctAnswers": FieldValue.increment(isCorrect ? 1 : 0),
+//       "wrongAnswers": FieldValue.increment(isCorrect ? 0 : 1),
+//       "answerStreak": streak.value,
+//       "lastEarnedPoints": points,
+//       "lastAnswerCorrect": isCorrect,
+//       "lastUpdated": FieldValue.serverTimestamp(),
+//     }, SetOptions(merge: true));
+//   }
+//
+//   @override
+//   void onClose() {
+//     _stageSubscription?.cancel();
+//     super.onClose();
+//   }
+// }
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:kahoot_app/routes/app_route.dart';
@@ -348,15 +504,15 @@ class ShowOptionController extends GetxController {
   var selectedIndex = (-1).obs;
   var hasAnswered = false.obs;
 
+  var message = "".obs;
+  var isCorrectAnswer = false.obs;
+  var lastEarnedPoints = 0.obs;
+  var score = 0.obs;
+
   late String quizId;
   late String userId;
   late String nickname;
   StreamSubscription? _stageSubscription;
-
-  var score = 0.obs;
-  var streak = 0.obs;
-  var correctAnswers = 0.obs;
-  var wrongAnswers = 0.obs;
 
   @override
   void onInit() {
@@ -375,12 +531,17 @@ class ShowOptionController extends GetxController {
         .collection("quizzes")
         .doc(quizId)
         .snapshots()
-        .listen((doc) {
+        .listen((doc) async {
           if (!doc.exists) return;
           final stage = doc.data()?["quizStage"] ?? "";
           final currentQuestionIndex = doc.data()?["currentQuestionIndex"] ?? 0;
 
           if (stage == "scoreboard") {
+            // If user hasn't answered, mark timeout
+            if (!hasAnswered.value) {
+              await _submitTimeout(currentQuestionIndex);
+            }
+
             // Navigate to ScoreStatus
             Get.offNamed(
               AppRoute.scoreStatus,
@@ -405,64 +566,32 @@ class ShowOptionController extends GetxController {
         });
   }
 
-  // Future<void> select(int selected, int correctIndex, String questionId) async {
-  //   if (hasAnswered.value) return;
-  //   hasAnswered.value = true;
-  //   selectedIndex.value = selected;
-  //
-  //   final isCorrect = selected == correctIndex;
-  //   final points = isCorrect ? 50 : 0;
-  //
-  //   if (isCorrect) {
-  //     correctAnswers.value++;
-  //     streak.value++;
-  //   } else {
-  //     wrongAnswers.value++;
-  //     streak.value = 0;
-  //   }
-  //   score.value += points;
-  //
-  //   final participantRef = FirebaseFirestore.instance
-  //       .collection("quizzes")
-  //       .doc(quizId)
-  //       .collection("participants")
-  //       .doc(userId);
-  //
-  //   await participantRef.collection("answers").doc(questionId).set({
-  //     "selectedOption": selected,
-  //     "isCorrect": isCorrect,
-  //     "earnedPoints": points,
-  //     "answeredAt": FieldValue.serverTimestamp(),
-  //   });
-  //
-  //   await participantRef.set({
-  //     "nickname": nickname,
-  //     "score": score.value,
-  //     "correctAnswers": correctAnswers.value,
-  //     "wrongAnswers": wrongAnswers.value,
-  //     "answerStreak": streak.value,
-  //     "lastEarnedPoints": points,
-  //     "lastUpdated": FieldValue.serverTimestamp(),
-  //   }, SetOptions(merge: true));
-  // }
-
+  /// User selects an option
   Future<void> select(int selected, int correctIndex, String questionId) async {
     if (hasAnswered.value) return;
+
     hasAnswered.value = true;
     selectedIndex.value = selected;
 
     final isCorrect = selected == correctIndex;
-    final points = isCorrect ? 50 : 0; // adjust scoring system
+    isCorrectAnswer.value = isCorrect;
 
-    if (isCorrect) {
-      correctAnswers.value++;
-      streak.value++;
-    } else {
-      wrongAnswers.value++;
-      streak.value = 0;
-    }
+    final points = isCorrect ? 50 : 0;
+    lastEarnedPoints.value = points;
+    score.value += points;
 
-    // store per-question answer
+    message.value = isCorrect ? "Correct" : "Wrong";
+
+    await _submitAnswer(selected, isCorrect, points, questionId);
+  }
+
+  /// Store answer in Firestore
+  Future<void> _submitAnswer(
+    int selected,
+    bool isCorrect,
+    int points,
+    String questionId,
+  ) async {
     final participantRef = FirebaseFirestore.instance
         .collection("quizzes")
         .doc(quizId)
@@ -476,17 +605,54 @@ class ShowOptionController extends GetxController {
       "answeredAt": FieldValue.serverTimestamp(),
     });
 
-    // ✅ increment total score instead of overwriting
     await participantRef.set({
       "nickname": nickname,
-      "score": FieldValue.increment(points), // cumulative score
-      "correctAnswers": FieldValue.increment(isCorrect ? 1 : 0),
-      "wrongAnswers": FieldValue.increment(isCorrect ? 0 : 1),
-      "answerStreak": streak.value,
+      "score": FieldValue.increment(points),
       "lastEarnedPoints": points,
       "lastAnswerCorrect": isCorrect,
       "lastUpdated": FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
+  }
+
+  /// Automatically submit timeout for unanswered question
+  Future<void> _submitTimeout(int questionIndex) async {
+    hasAnswered.value = true;
+    selectedIndex.value = -1;
+    isCorrectAnswer.value = false;
+    lastEarnedPoints.value = 0;
+    message.value = "Timeout / Not Answered";
+
+    // Get the questionId
+    final query = await FirebaseFirestore.instance
+        .collection("quizzes")
+        .doc(quizId)
+        .collection("questions")
+        .orderBy(FieldPath.documentId)
+        .get();
+
+    if (query.docs.length > questionIndex) {
+      final questionId = query.docs[questionIndex].id;
+
+      final participantRef = FirebaseFirestore.instance
+          .collection("quizzes")
+          .doc(quizId)
+          .collection("participants")
+          .doc(userId);
+
+      await participantRef.collection("answers").doc(questionId).set({
+        "selectedOption": null,
+        "isCorrect": false,
+        "earnedPoints": 0,
+        "answeredAt": FieldValue.serverTimestamp(),
+      });
+
+      await participantRef.set({
+        "nickname": nickname,
+        "lastEarnedPoints": 0,
+        "lastAnswerCorrect": false,
+        "lastUpdated": FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    }
   }
 
   @override

@@ -37,7 +37,7 @@ class FinalRankView extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
@@ -46,7 +46,7 @@ class FinalRankView extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors().white,
                   borderRadius: BorderRadius.circular(6),
-                  boxShadow: const [
+                  boxShadow: [
                     BoxShadow(
                       blurRadius: 4,
                       color: Colors.black26,
@@ -122,7 +122,7 @@ class FinalRankView extends StatelessWidget {
               BoxShadow(
                 color: AppColors().white,
                 blurRadius: 6,
-                offset: const Offset(2, 4),
+                offset: Offset(2, 4),
               ),
             ],
           ),
@@ -130,7 +130,7 @@ class FinalRankView extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               Text(
                 player.name,
                 style: TextStyle(

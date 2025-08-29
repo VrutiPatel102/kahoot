@@ -19,9 +19,9 @@ class GetReadyLoadingScreen extends GetView<GetReadyLoadingController> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _titleText(),
-               SizedBox(height: 25),
+              SizedBox(height: 25),
               _loadingIndicator(),
-               SizedBox(height: 20),
+              SizedBox(height: 20),
               _loadingText(),
             ],
           ),
@@ -42,10 +42,7 @@ class GetReadyLoadingScreen extends GetView<GetReadyLoadingController> {
   }
 
   Widget _loadingIndicator() {
-    return CircularProgressIndicator(
-      color: AppColors().white,
-      strokeWidth: 8,
-    );
+    return CircularProgressIndicator(color: AppColors().white, strokeWidth: 8);
   }
 
   Widget _loadingText() {

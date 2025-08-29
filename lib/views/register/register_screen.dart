@@ -39,12 +39,6 @@ class RegisterScreen extends GetView<RegisterController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // IconButton(
-          //   onPressed: () {
-          //     Navigator.pop(context);
-          //   },
-          //   icon: Icon(Icons.arrow_back_ios),
-          // ),
           Text(
             " Welcome! \nto Register",
             style: TextStyle(
@@ -107,12 +101,9 @@ class RegisterScreen extends GetView<RegisterController> {
         keyboardType: keyboardType,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: const TextStyle(fontSize: 16),
-          border: const OutlineInputBorder(),
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 10,
-            horizontal: 12,
-          ),
+          hintStyle: TextStyle(fontSize: 16),
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
         ),
       ),
     );
@@ -143,10 +134,10 @@ class RegisterScreen extends GetView<RegisterController> {
         text: TextSpan(
           style: TextStyle(fontSize: 14, color: AppColors().white),
           children: [
-            const TextSpan(text: "Allready have an account? "),
+            TextSpan(text: "Allready have an account? "),
             TextSpan(
               text: "Login",
-              style: const TextStyle(
+              style: TextStyle(
                 decoration: TextDecoration.underline,
                 fontWeight: FontWeight.bold,
               ),

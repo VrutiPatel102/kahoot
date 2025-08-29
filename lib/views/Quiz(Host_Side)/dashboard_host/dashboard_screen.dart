@@ -30,10 +30,10 @@ class HostDashboardView extends GetView<HostDashboardController> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar() {
+  AppBar _buildAppBar() {
     return AppBar(
-      title: const Text("Host Dashboard"),
-      bottom: const TabBar(
+      title: Text("Host Dashboard"),
+      bottom: TabBar(
         tabs: [
           Tab(text: "View Quizzes"),
           Tab(text: "Create Quiz"),
@@ -42,7 +42,6 @@ class HostDashboardView extends GetView<HostDashboardController> {
     );
   }
 
-  /// ------------------ VIEW QUIZZES TAB ------------------
   Widget _buildViewQuizzesTab() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('quizzes').snapshots(),
@@ -67,10 +66,9 @@ class HostDashboardView extends GetView<HostDashboardController> {
             return ExpansionTile(
               title: Text(
                 "${index + 1}) $quizTitle",
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               children: [
-                // QUESTIONS
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('quizzes')
@@ -80,11 +78,11 @@ class HostDashboardView extends GetView<HostDashboardController> {
                   builder: (context, questionSnapshot) {
                     if (questionSnapshot.connectionState ==
                         ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
+                      return Center(child: CircularProgressIndicator());
                     }
                     if (!questionSnapshot.hasData ||
                         questionSnapshot.data!.docs.isEmpty) {
-                      return const Padding(
+                      return Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text("No Questions added yet"),
                       );
@@ -129,8 +127,7 @@ class HostDashboardView extends GetView<HostDashboardController> {
                     );
                   },
                 ),
-                const SizedBox(height: 10),
-                // HOST BUTTON
+                SizedBox(height: 10),
                 ElevatedButton.icon(
                   onPressed: () {
                     _showHostConfirmationDialog(quizTitle, doc.id);
@@ -166,7 +163,7 @@ class HostDashboardView extends GetView<HostDashboardController> {
   void _showHostConfirmationDialog(String quizTitle, String quizId) {
     Get.dialog(
       AlertDialog(
-        title: const Text("Host Quiz"),
+        title: Text("Host Quiz"),
         content: Text("Are you sure you want to host '$quizTitle'?"),
         actions: [
           TextButton(
@@ -189,7 +186,6 @@ class HostDashboardView extends GetView<HostDashboardController> {
     );
   }
 
-  /// ------------------ CREATE QUIZ TAB ------------------
   Widget _buildCreateQuizTab(TextEditingController quizTitleController) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -202,29 +198,25 @@ class HostDashboardView extends GetView<HostDashboardController> {
                 filled: true,
                 fillColor: AppColors().white,
                 hintText: "Quiz Title",
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: const RoundedRectangleBorder(),
-              ),
+              style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder()),
               onPressed: () => _showAddQuestionDialog(),
               child: Text(
                 "Add Question",
                 style: TextStyle(color: AppColors().black),
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             Obx(
               () => Text("Questions Added: ${controller.tempQuestions.length}"),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: const RoundedRectangleBorder(),
-              ),
+              style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder()),
               onPressed: () async {
                 await controller.saveQuiz(quizTitleController.text.trim());
                 quizTitleController.clear();
@@ -247,13 +239,13 @@ class HostDashboardView extends GetView<HostDashboardController> {
 
     Get.dialog(
       AlertDialog(
-        title: const Text("Add Question"),
+        title: Text("Add Question"),
         content: SingleChildScrollView(
           child: Column(
             children: [
               TextField(
                 controller: questionController,
-                decoration: const InputDecoration(labelText: "Question"),
+                decoration: InputDecoration(labelText: "Question"),
               ),
               for (int i = 0; i < 4; i++)
                 TextField(
@@ -281,7 +273,7 @@ class HostDashboardView extends GetView<HostDashboardController> {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text("Cancel")),
+          TextButton(onPressed: () => Get.back(), child: Text("Cancel")),
           ElevatedButton(
             onPressed: () {
               controller.addTempQuestion(
@@ -291,7 +283,7 @@ class HostDashboardView extends GetView<HostDashboardController> {
               );
               Get.back();
             },
-            child: const Text("Add"),
+            child: Text("Add"),
           ),
         ],
       ),

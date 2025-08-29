@@ -48,7 +48,6 @@ class QuizQuestionController extends GetxController {
     super.onClose();
   }
 
-  /// Fetch quiz questions from Firestore
   Future<void> fetchQuestions() async {
     try {
       final snapshot = await FirebaseFirestore.instance
@@ -88,7 +87,6 @@ class QuizQuestionController extends GetxController {
     selectedOptionIndex.value = -1;
     remainingTime.value = totalTime;
 
-    // ✅ Tell Firebase we are showing a question
     quizRef.doc(quizId).update({
       "quizStage": "question",
       "currentQuestionIndex": currentQuestionIndex.value,
@@ -117,10 +115,8 @@ class QuizQuestionController extends GetxController {
   }
 
   void goToScoreboard() {
-    // ✅ Update Firebase so users switch to ScoreStatus
     quizRef.doc(quizId).update({"quizStage": "scoreboard"});
 
-    // Navigate host to scoreboard view
     Get.toNamed(AppRoute.scoreboardScreen, arguments: {"quizId": quizId});
   }
 
@@ -137,14 +133,12 @@ class QuizQuestionController extends GetxController {
     selectedOptionIndex.value = -1;
   }
 
-  /// Call this when host presses "Next" on scoreboard
   void goToNextQuestion() {
     if (!isLastQuestion) {
       currentQuestionIndex.value++;
       loadQuestion();
       startTimer();
     } else {
-      // ✅ Final stage
       quizRef.doc(quizId).update({"quizStage": "final"});
       Get.toNamed(AppRoute.finalRankScreen, arguments: {"quizId": quizId});
     }

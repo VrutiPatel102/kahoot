@@ -58,7 +58,7 @@ class QuizLobbyView extends GetView<QuizLobbyController> {
 
   Widget buildPinCodeSection() {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors().white,
         borderRadius: BorderRadius.circular(15),
@@ -95,7 +95,7 @@ class QuizLobbyView extends GetView<QuizLobbyController> {
   Widget buildPlayersList() {
     return Obx(
       () => Container(
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.85),
           borderRadius: BorderRadius.circular(15),
@@ -146,7 +146,7 @@ class QuizLobbyView extends GetView<QuizLobbyController> {
           backgroundColor: hasPlayers
               ? AppColors().purple
               : AppColors().grey300,
-          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
