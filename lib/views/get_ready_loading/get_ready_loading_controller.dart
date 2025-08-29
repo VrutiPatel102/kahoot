@@ -1,3 +1,42 @@
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:get/get.dart';
+// import 'package:kahoot_app/routes/app_route.dart';
+//
+// class GetReadyLoadingController extends GetxController {
+//   late String quizId;
+//
+//   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+//
+//   @override
+//   void onInit() {
+//     super.onInit();
+//     final args = Get.arguments ?? {};
+//     quizId = args["quizId"] ?? "";
+//
+//     print('GetReadyLoadingController initialized with quizId: $quizId');
+//
+//     // 🔹 Listen to Firestore instead of fixed delay
+//     _listenForCountdownEnd();
+//   }
+//
+//   void _listenForCountdownEnd() {
+//     _firestore.collection('quizzes').doc(quizId).snapshots().listen((doc) {
+//       if (doc.exists && doc.data()?['status'] == 'question') {
+//         // 🔹 Navigate only when host finishes countdown
+//         print('Navigating to ShowOption...');
+//         Get.offNamed(
+//           AppRoute.showOption,
+//           arguments: {
+//             "quizId": quizId,
+//             "userId": FirebaseAuth.instance.currentUser?.uid, // 🔹 add this
+//           },
+//         );
+//       }
+//     });
+//   }
+// }
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -5,75 +44,62 @@ import 'package:kahoot_app/routes/app_route.dart';
 
 class GetReadyLoadingController extends GetxController {
   late String quizId;
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void onInit() {
     super.onInit();
-    final args = Get.arguments ?? {};
-    quizId = args["quizId"] ?? "";
 
-    if (quizId.isEmpty) {
-      print("❌ quizId is missing!");
-      return;
+    // Get quizId from navigation arguments
+    quizId = Get.arguments?["quizId"] ?? "";
+
+    if (quizId.isNotEmpty) {
+      _listenForCountdownEnd();
+    } else {
+      Get.snackbar("Error", "❌ Quiz ID is missing");
     }
-
-    // Use a microtask to ensure GetX navigation works
-    Future.microtask(() => _fetchFirstQuestionAndNavigate());
   }
 
-  Future<void> _fetchFirstQuestionAndNavigate() async {
-    try {
-      // 1️⃣ Listen to the quiz document for real-time status
-      _firestore.collection('quizzes').doc(quizId).snapshots().listen((
-        docSnapshot,
-      ) async {
-        if (!docSnapshot.exists) return;
+  void _listenForCountdownEnd() {
+    _firestore.collection('quizzes').doc(quizId).snapshots().listen((
+      doc,
+    ) async {
+      if (!doc.exists) return;
 
-        // Check if the quiz has started or status is 'question'
-        final status = docSnapshot.data()?['status'] ?? '';
-        if (status != 'question') return;
+      final data = doc.data();
+      if (data == null) return;
 
-        // 2️⃣ Fetch the first question
-        final questionsSnapshot = await _firestore
+      // Wait for host to change status
+      final status = data['status'] ?? '';
+      final currentQuestionIndex = data['currentQuestionIndex'] ?? 0;
+
+      if (status == 'question') {
+        // Fetch questions in order by ID (q0, q1, q2...)
+        final query = await _firestore
             .collection('quizzes')
             .doc(quizId)
             .collection('questions')
-            .orderBy('createdAt')
-            .limit(1)
+            .orderBy(FieldPath.documentId)
             .get();
 
-        if (questionsSnapshot.docs.isEmpty) {
-          print("❌ No questions found for quizId: $quizId");
-          return;
+        if (query.docs.length > currentQuestionIndex) {
+          final questionDoc = query.docs[currentQuestionIndex];
+          final questionId =
+              questionDoc.id; // 👈 actual Firestore docId (q0,q1,q2)
+
+          // Navigate to ShowOption screen
+          Get.offNamed(
+            AppRoute.showOption,
+            arguments: {
+              "quizId": quizId,
+              "userId": FirebaseAuth.instance.currentUser?.uid,
+              "questionId": questionId, // ✅ no longer missing
+            },
+          );
+        } else {
+          Get.snackbar("Error", "❌ Question index out of range");
         }
-
-        final firstQuestionId = questionsSnapshot.docs.first.id;
-
-        // 3️⃣ Get userId & nickname
-        final userId = FirebaseAuth.instance.currentUser?.uid ?? "";
-        final nickname = "Guest"; // You can pass from previous screen
-
-        if (userId.isEmpty) {
-          print("❌ User not logged in!");
-          return;
-        }
-
-        // 4️⃣ Navigate once to ShowOption
-        print("✅ Navigating to ShowOption with questionId: $firstQuestionId");
-        Get.offNamed(
-          AppRoute.showOption,
-          arguments: {
-            "quizId": quizId,
-            "userId": userId,
-            "nickname": nickname,
-            "questionId": firstQuestionId,
-          },
-        );
-      });
-    } catch (e) {
-      print("❌ Error fetching first question: $e");
-    }
+      }
+    });
   }
 }

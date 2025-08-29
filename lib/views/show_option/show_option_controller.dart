@@ -257,6 +257,88 @@
 //     );
 //   }
 // }
+//
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:get/get.dart';
+// import 'package:kahoot_app/routes/app_route.dart';
+//
+// class ShowOptionController extends GetxController {
+//   var selectedIndex = (-1).obs;
+//   var hasAnswered = false.obs;
+//
+//   late final String quizId;
+//   late final String userId;
+//   late final String nickname;
+//
+//   var score = 0.obs;
+//   var streak = 0.obs;
+//   var correctAnswers = 0.obs;
+//   var wrongAnswers = 0.obs;
+//
+//   @override
+//   void onInit() {
+//     super.onInit();
+//     final args = Get.arguments ?? {};
+//     quizId = args["quizId"] ?? "";
+//     userId = args["userId"] ?? "";
+//     nickname = args["nickname"] ?? "Guest";
+//
+//     if (quizId.isEmpty || userId.isEmpty) {
+//       print("❌ quizId or userId missing in ShowOptionController");
+//     }
+//   }
+//
+//   Future<void> select(int selected, int correctIndex, String questionId) async {
+//     final isCorrect = (selected == correctIndex);
+//     final points = isCorrect ? 50 : 0;
+//
+//     if (isCorrect) {
+//       correctAnswers.value++;
+//       streak.value++;
+//     } else {
+//       wrongAnswers.value++;
+//       streak.value = 0;
+//     }
+//     score.value += points;
+//
+//     final participantRef = FirebaseFirestore.instance
+//         .collection("quizzes")
+//         .doc(quizId)
+//         .collection("participants")
+//         .doc(userId);
+//
+//     await participantRef.collection("answers").doc(questionId).set({
+//       "selectedOption": selected,
+//       "isCorrect": isCorrect,
+//       "earnedPoints": points,
+//       "answeredAt": FieldValue.serverTimestamp(),
+//     });
+//
+//     await participantRef.set({
+//       "nickname": nickname,
+//       "score": score.value,
+//       "correctAnswers": correctAnswers.value,
+//       "wrongAnswers": wrongAnswers.value,
+//       "answerStreak": streak.value,
+//       "lastEarnedPoints": points,
+//       "lastUpdated": FieldValue.serverTimestamp(),
+//     }, SetOptions(merge: true));
+//
+//     // Navigate to ScoreStatus
+//     Get.toNamed(
+//       AppRoute.scoreStatus,
+//       arguments: {
+//         "quizId": quizId,
+//         "userId": userId,
+//         "nickname": nickname,
+//         "questionId": questionId,
+//         "isCorrect": isCorrect,
+//         "points": points,
+//       },
+//     );
+//   }
+// }
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:kahoot_app/routes/app_route.dart';
@@ -283,22 +365,16 @@ class ShowOptionController extends GetxController {
     nickname = args["nickname"] ?? "Guest";
 
     if (quizId.isEmpty || userId.isEmpty) {
-      throw Exception(
-        "❌ quizId and userId are required for ShowOptionController",
-      );
+      print("❌ quizId or userId missing in ShowOptionController");
     }
   }
 
-  /// Called when user selects an option
-  Future<void> select(
-    int selectedIndexLocal,
-    int correctIndex,
-    String questionId,
-  ) async {
-    if (hasAnswered.value) return; // prevent multiple taps
+  Future<void> select(int selected, int correctIndex, String questionId) async {
+    if (hasAnswered.value) return; // ✅ prevent multiple submissions
     hasAnswered.value = true;
+    selectedIndex.value = selected;
 
-    final isCorrect = (selectedIndexLocal == correctIndex);
+    final isCorrect = (selected == correctIndex);
     final points = isCorrect ? 50 : 0;
 
     if (isCorrect) {
@@ -308,9 +384,7 @@ class ShowOptionController extends GetxController {
       wrongAnswers.value++;
       streak.value = 0;
     }
-
     score.value += points;
-    this.selectedIndex.value = selectedIndexLocal;
 
     final participantRef = FirebaseFirestore.instance
         .collection("quizzes")
@@ -318,15 +392,13 @@ class ShowOptionController extends GetxController {
         .collection("participants")
         .doc(userId);
 
-    // Save the answer for this question
     await participantRef.collection("answers").doc(questionId).set({
-      "selectedOption": selectedIndexLocal,
+      "selectedOption": selected,
       "isCorrect": isCorrect,
       "earnedPoints": points,
       "answeredAt": FieldValue.serverTimestamp(),
     });
 
-    // Update participant summary
     await participantRef.set({
       "nickname": nickname,
       "score": score.value,
@@ -337,7 +409,7 @@ class ShowOptionController extends GetxController {
       "lastUpdated": FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
 
-    // Navigate to score screen
+    // 🚀 Navigate to ScoreStatus
     Get.toNamed(
       AppRoute.scoreStatus,
       arguments: {
