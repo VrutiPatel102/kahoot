@@ -7,9 +7,7 @@ import 'package:kahoot_app/views/Quiz(Host_Side)/final_rank/final_rank_controlle
 
 class FinalRankView extends StatelessWidget {
   final controller = Get.put(FinalRankController());
-
   FinalRankView({super.key});
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -148,7 +146,6 @@ class FinalRankView extends StatelessWidget {
             ],
           ),
         ),
-
         Positioned(
           top: 20,
           left: 0,
