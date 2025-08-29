@@ -122,11 +122,11 @@
 //   }
 // }
 
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:kahoot_app/routes/app_route.dart';
-import 'package:kahoot_app/models/participant_model.dart';
 
 class ScoreStatusController extends GetxController {
   var score = 0.obs;
@@ -134,35 +134,26 @@ class ScoreStatusController extends GetxController {
   var lastEarnedPoints = 0.obs;
   var isCorrectAnswer = false.obs;
 
-  late final String quizId;
-  late final String userId;
-  late final String nickname;
+  late String quizId;
+  late String userId;
+  late String nickname;
+  StreamSubscription? _participantSub;
+  StreamSubscription? _stageSub;
 
   @override
   void onInit() {
     super.onInit();
     final args = Get.arguments ?? {};
     quizId = args["quizId"] ?? "";
-    userId = FirebaseAuth.instance.currentUser?.uid ?? "";
+    userId = args["userId"] ?? "";
     nickname = args["nickname"] ?? "Guest";
 
-    if (quizId.isEmpty || userId.isEmpty) {
-      throw Exception(
-        "❌ quizId and userId are required for ScoreStatusController",
-      );
-    }
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-    _listenMyScore();
+    _listenParticipant();
     _listenStageChanges();
   }
 
-  /// 🔁 Real-time listener for my participant doc
-  void _listenMyScore() {
-    FirebaseFirestore.instance
+  void _listenParticipant() {
+    _participantSub = FirebaseFirestore.instance
         .collection("quizzes")
         .doc(quizId)
         .collection("participants")
@@ -171,40 +162,67 @@ class ScoreStatusController extends GetxController {
         .listen((doc) {
           if (!doc.exists) return;
 
-          final participant = Participant.fromDoc(doc);
+          final data = doc.data();
+          if (data == null) return;
 
-          score.value = participant.score;
-          answerStreak.value = participant.answerStreak;
-          lastEarnedPoints.value = participant.lastEarnedPoints;
-          isCorrectAnswer.value = participant.isCorrectAnswer;
+          score.value = data["score"] ?? 0;
+          answerStreak.value = data["answerStreak"] ?? 0;
+          lastEarnedPoints.value = data["lastEarnedPoints"] ?? 0;
+          isCorrectAnswer.value = data["lastEarnedPoints"] > 0;
         });
   }
 
-  /// 🚦 Listen to quiz stage changes
   void _listenStageChanges() {
-    FirebaseFirestore.instance
+    _stageSub = FirebaseFirestore.instance
         .collection("quizzes")
         .doc(quizId)
         .snapshots()
-        .listen((snapshot) {
-          if (!snapshot.exists) return;
+        .listen((doc) async {
+          if (!doc.exists) return;
 
-          final stage = snapshot.data()?["quizStage"];
-          if (stage == null) return;
+          final stage = doc.data()?["quizStage"] ?? "";
+          final currentQuestionIndex = doc.data()?["currentQuestionIndex"] ?? 0;
 
           if (stage == "question") {
-            Get.offNamed(
-              AppRoute.showOption,
-              arguments: {"quizId": quizId, "nickname": nickname},
-              preventDuplicates: false,
-            );
+            // Navigate to next question ShowOption
+            final query = await FirebaseFirestore.instance
+                .collection("quizzes")
+                .doc(quizId)
+                .collection("questions")
+                .orderBy(FieldPath.documentId)
+                .get();
+
+            if (query.docs.length > currentQuestionIndex) {
+              final questionId = query.docs[currentQuestionIndex].id;
+
+              Get.offNamed(
+                AppRoute.showOption,
+                arguments: {
+                  "quizId": quizId,
+                  "userId": userId,
+                  "nickname": nickname,
+                  "questionId": questionId,
+                },
+              );
+            }
           } else if (stage == "final") {
+            // Quiz finished
             Get.offNamed(
               AppRoute.userRank,
-              arguments: {"quizId": quizId, "nickname": nickname},
-              preventDuplicates: false,
+              arguments: {
+                "quizId": quizId,
+                "userId": userId,
+                "nickname": nickname,
+              },
             );
           }
         });
+  }
+
+  @override
+  void onClose() {
+    _participantSub?.cancel();
+    _stageSub?.cancel();
+    super.onClose();
   }
 }

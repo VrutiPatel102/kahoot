@@ -338,6 +338,7 @@
 //     );
 //   }
 // }
+import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
@@ -347,9 +348,10 @@ class ShowOptionController extends GetxController {
   var selectedIndex = (-1).obs;
   var hasAnswered = false.obs;
 
-  late final String quizId;
-  late final String userId;
-  late final String nickname;
+  late String quizId;
+  late String userId;
+  late String nickname;
+  StreamSubscription? _stageSubscription;
 
   var score = 0.obs;
   var streak = 0.obs;
@@ -364,17 +366,51 @@ class ShowOptionController extends GetxController {
     userId = args["userId"] ?? "";
     nickname = args["nickname"] ?? "Guest";
 
-    if (quizId.isEmpty || userId.isEmpty) {
-      print("❌ quizId or userId missing in ShowOptionController");
-    }
+    _listenStageChanges();
+  }
+
+  /// Listen host stage, move to ScoreStatus when stage changes
+  void _listenStageChanges() {
+    _stageSubscription = FirebaseFirestore.instance
+        .collection("quizzes")
+        .doc(quizId)
+        .snapshots()
+        .listen((doc) {
+          if (!doc.exists) return;
+          final stage = doc.data()?["quizStage"] ?? "";
+          final currentQuestionIndex = doc.data()?["currentQuestionIndex"] ?? 0;
+
+          if (stage == "scoreboard") {
+            // Navigate to ScoreStatus
+            Get.offNamed(
+              AppRoute.scoreStatus,
+              arguments: {
+                "quizId": quizId,
+                "userId": userId,
+                "nickname": nickname,
+                "questionIndex": currentQuestionIndex,
+              },
+            );
+          } else if (stage == "final") {
+            // Quiz finished
+            Get.offNamed(
+              AppRoute.userRank,
+              arguments: {
+                "quizId": quizId,
+                "userId": userId,
+                "nickname": nickname,
+              },
+            );
+          }
+        });
   }
 
   Future<void> select(int selected, int correctIndex, String questionId) async {
-    if (hasAnswered.value) return; // ✅ prevent multiple submissions
+    if (hasAnswered.value) return;
     hasAnswered.value = true;
     selectedIndex.value = selected;
 
-    final isCorrect = (selected == correctIndex);
+    final isCorrect = selected == correctIndex;
     final points = isCorrect ? 50 : 0;
 
     if (isCorrect) {
@@ -408,18 +444,11 @@ class ShowOptionController extends GetxController {
       "lastEarnedPoints": points,
       "lastUpdated": FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
+  }
 
-    // 🚀 Navigate to ScoreStatus
-    Get.toNamed(
-      AppRoute.scoreStatus,
-      arguments: {
-        "quizId": quizId,
-        "userId": userId,
-        "nickname": nickname,
-        "questionId": questionId,
-        "isCorrect": isCorrect,
-        "points": points,
-      },
-    );
+  @override
+  void onClose() {
+    _stageSubscription?.cancel();
+    super.onClose();
   }
 }
